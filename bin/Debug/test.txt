@@ -1,0 +1,4 @@
+algorithm quick_sort
+begin
+	hello
+end
