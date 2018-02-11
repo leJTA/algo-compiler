@@ -27,7 +27,7 @@ namespace client {
 
          typedef function<client::error_handler<Iterator> > error_handler_function;
 
-         identifier = !expr.keywords
+         identifier = !lexeme[expr.keywords >> !(alnum | '_')]
             >> raw[lexeme[(alpha | '_') >> *(alnum | '_')]];
 
          start =
@@ -35,7 +35,7 @@ namespace client {
             > -(lexeme["constants" >> !(alnum | '_')])
             > -(lexeme["variables" >> !(alnum | '_')])
             > -(lexeme["functions" >> !(alnum | '_')])
-            > lexeme["begin" >> !(alnum | '_')] > +(identifier) > "end";
+            > lexeme["begin" >> !(alnum | '_')] > +(identifier) > lexeme["end" >> !(alnum | '_')];
 
             // Error handling: on error in statement_list, call error_handler.
             on_error<fail>(start,

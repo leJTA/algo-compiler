@@ -90,14 +90,14 @@ namespace client {
       };
 
       struct variable_declaration_list : std::list<variable_declaration> {};
-
+      /*
       struct constant_declaration {
          identifier lhs;
          int rhs;
       };
 
       struct constant_declaration_list : std::list<constant_declaration> {};
-
+      */
 
       struct if_statement;
       struct while_statement;
@@ -105,12 +105,13 @@ namespace client {
       struct statement_list;
 
       typedef boost::variant<
-            variable_declaration
-          , assignment
-          , boost::recursive_wrapper<if_statement>
-          , boost::recursive_wrapper<while_statement>
-          //, boost::recursive_wrapper<for_statement>
-          , boost::recursive_wrapper<statement_list>
+           variable_declaration
+         //, constant_declaration
+         , assignment
+         , boost::recursive_wrapper<if_statement>
+         , boost::recursive_wrapper<while_statement>
+         //, boost::recursive_wrapper<for_statement>
+         , boost::recursive_wrapper<statement_list>
         >
       statement;
 
@@ -131,7 +132,7 @@ namespace client {
 
       struct program {
          identifier program_name;
-         constant_declaration_list consts;
+         //constant_declaration_list consts;
          variable_declaration_list vars;
          statement_list body;
       };
@@ -139,12 +140,14 @@ namespace client {
       // print functions for debugging
       inline std::ostream& operator<<(std::ostream& out, nil)
       {
-         out << "nil"; return out;
+         out << "nil";
+         return out;
       }
 
       inline std::ostream& operator<<(std::ostream& out, identifier const& id)
       {
-         out << id.name; return out;
+         out << id.name;
+         return out;
       }
    }
 }
@@ -171,13 +174,13 @@ BOOST_FUSION_ADAPT_STRUCT(
     client::ast::variable_declaration,
     (client::ast::identifier, lhs)
 )
-
+/*
 BOOST_FUSION_ADAPT_STRUCT(
    client::ast::constant_declaration,
    (client::ast::identifier, lhs)
    (int, rhs)
 )
-
+*/
 BOOST_FUSION_ADAPT_STRUCT(
     client::ast::assignment,
     (client::ast::identifier, lhs)
@@ -200,7 +203,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 BOOST_FUSION_ADAPT_STRUCT(
    client::ast::program,
    (client::ast::identifier, program_name)
-   (client::ast::constant_declaration_list, consts)
+//   (client::ast::constant_declaration_list, consts)
    (client::ast::variable_declaration_list, vars)
    (client::ast::statement_list, body)
 )
