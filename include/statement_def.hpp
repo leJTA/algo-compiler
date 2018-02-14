@@ -18,6 +18,7 @@ namespace client {
          qi::alpha_type alpha;
          qi::alnum_type alnum;
          qi::lit_type lit;
+         qi::blank_type blank;
 
          using qi::on_error;
          using qi::on_success;
@@ -39,6 +40,8 @@ namespace client {
             | write_statement
             | if_statement
             | while_statement
+            | repeat_until_statement
+            | for_statement
             ;
 
          identifier =
@@ -50,7 +53,7 @@ namespace client {
                 identifier
             >   ":="
             >   expr
-            >   no_skip[eol]
+            >   no_skip[*blank >> eol]
             ;
 
          read_statement =
@@ -58,7 +61,7 @@ namespace client {
             > '('
             > identifier
             > ')'
-            > no_skip[eol]
+            > no_skip[*blank >> eol]
             ;
 
          write_statement =
@@ -66,7 +69,7 @@ namespace client {
             > '('
             > (expr % ',')
             > ')'
-            > no_skip[eol]
+            > no_skip[*blank >> eol]
             ;
 
          if_statement =
@@ -88,6 +91,29 @@ namespace client {
             > lexeme["do" >> !(alnum | '_')]
             > statement_list
             > lexeme["endwhile" >> !(alnum | '_')]
+            ;
+
+         repeat_until_statement =
+              lexeme["repeat" >> !(alnum | '_')]
+            > statement_list
+            > lexeme["until" >> !(alnum | '_')]
+            > expr
+            > no_skip[*blank >> eol]
+            ;
+
+         for_statement =
+              lexeme["for" >> !(alnum | '_')]
+            > identifier
+            > ":="
+            > expr
+            > lexeme["to" >> !(alnum | '_')]
+            > expr
+            > -(
+                  lexeme["by" >> !(alnum | '_')] > expr
+               )
+            > lexeme["do" >> !(alnum | '_')]
+            > statement_list
+            > lexeme["endfor" >> !(alnum | '_')]
             ;
 
          // Debugging and error handling and reporting support.

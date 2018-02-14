@@ -106,7 +106,8 @@ namespace client {
       struct write_statement;
       struct if_statement;
       struct while_statement;
-      //struct for_statement;
+      struct repeat_until_statement;
+      struct for_statement;
       struct statement_list;
 
       typedef boost::variant<
@@ -117,7 +118,8 @@ namespace client {
          , write_statement
          , boost::recursive_wrapper<if_statement>
          , boost::recursive_wrapper<while_statement>
-         //, boost::recursive_wrapper<for_statement>
+         , boost::recursive_wrapper<repeat_until_statement>
+         , boost::recursive_wrapper<for_statement>
          , boost::recursive_wrapper<statement_list>
         >
       statement;
@@ -143,6 +145,19 @@ namespace client {
       {
         expression condition;
         statement body;
+      };
+
+      struct repeat_until_statement {
+         statement body;
+         expression condition;
+      };
+
+      struct for_statement {
+         identifier counter;
+         expression start;
+         expression end;
+         boost::optional<expression> step;
+         statement body;
       };
 
       struct program {
@@ -223,6 +238,21 @@ BOOST_FUSION_ADAPT_STRUCT(
     client::ast::while_statement,
     (client::ast::expression, condition)
     (client::ast::statement, body)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+    client::ast::repeat_until_statement,
+    (client::ast::statement, body)
+    (client::ast::expression, condition)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+   client::ast::for_statement,
+   (client::ast::identifier, counter)
+   (client::ast::expression, start)
+   (client::ast::expression, end)
+   (boost::optional<client::ast::expression>, step)
+   (client::ast::statement, body)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
