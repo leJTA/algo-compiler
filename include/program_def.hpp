@@ -9,7 +9,7 @@ namespace client {
 
       template <typename Iterator>
       program<Iterator>::program(error_handler<Iterator>& error_handler)
-      : program::base_type(start), expr(error_handler)
+      : program::base_type(start), body(error_handler)
       {
          qi::_1_type _1;
          qi::_2_type _2;
@@ -27,15 +27,20 @@ namespace client {
 
          typedef function<client::error_handler<Iterator> > error_handler_function;
 
-         identifier = !lexeme[expr.keywords >> !(alnum | '_')]
-            >> raw[lexeme[(alpha | '_') >> *(alnum | '_')]];
+         name =
+               !body.expr.keywords
+            >> raw[lexeme[(alpha | '_') >> *(alnum | '_')]]
+            ;
+
+         identifier = name;
 
          start =
-               lexeme["algorithm" >> !(alnum | '_')] > identifier
+               lexeme["algorithm" >> !(alnum | '_')] >> identifier
             > -(lexeme["constants" >> !(alnum | '_')])
             > -(lexeme["variables" >> !(alnum | '_')])
             > -(lexeme["functions" >> !(alnum | '_')])
-            > lexeme["begin" >> !(alnum | '_')] > +(identifier) > lexeme["end" >> !(alnum | '_')];
+            > lexeme["begin" >> !(alnum | '_')] > body > lexeme["end" >> !(alnum | '_')]
+            ;
 
             // Error handling: on error in statement_list, call error_handler.
             on_error<fail>(start,

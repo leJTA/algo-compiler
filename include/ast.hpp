@@ -33,7 +33,9 @@ namespace client {
       typedef boost::variant<
             nil
           , bool
-          , unsigned int
+          , double
+          , int
+          , std::string
           , identifier
           , boost::recursive_wrapper<unary>
           , boost::recursive_wrapper<expression>
@@ -45,6 +47,7 @@ namespace client {
         op_plus,
         op_minus,
         op_times,
+        op_power,
         op_divide,
         op_modulo,
         op_positive,
@@ -99,6 +102,8 @@ namespace client {
       struct constant_declaration_list : std::list<constant_declaration> {};
       */
 
+      struct read_statement;
+      struct write_statement;
       struct if_statement;
       struct while_statement;
       //struct for_statement;
@@ -108,6 +113,8 @@ namespace client {
            variable_declaration
          //, constant_declaration
          , assignment
+         , read_statement
+         , write_statement
          , boost::recursive_wrapper<if_statement>
          , boost::recursive_wrapper<while_statement>
          //, boost::recursive_wrapper<for_statement>
@@ -116,6 +123,14 @@ namespace client {
       statement;
 
       struct statement_list : std::list<statement> {};
+
+      struct read_statement {
+         identifier variable;
+      };
+
+      struct write_statement {
+         std::list<expression> expression_list;
+      };
 
       struct if_statement
       {
@@ -133,8 +148,8 @@ namespace client {
       struct program {
          identifier program_name;
          //constant_declaration_list consts;
-         variable_declaration_list vars;
-         statement_list body;
+         //variable_declaration_list vars;
+         statement body;
       };
 
       // print functions for debugging
@@ -188,6 +203,16 @@ BOOST_FUSION_ADAPT_STRUCT(
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
+    client::ast::read_statement,
+    (client::ast::identifier, variable)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+    client::ast::write_statement,
+    (std::list<client::ast::expression>, expression_list)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
     client::ast::if_statement,
     (client::ast::expression, condition)
     (client::ast::statement, then)
@@ -204,8 +229,8 @@ BOOST_FUSION_ADAPT_STRUCT(
    client::ast::program,
    (client::ast::identifier, program_name)
 //   (client::ast::constant_declaration_list, consts)
-   (client::ast::variable_declaration_list, vars)
-   (client::ast::statement_list, body)
+//   (client::ast::variable_declaration_list, vars)
+   (client::ast::statement, body)
 )
 
 #endif // __AST_HPP__

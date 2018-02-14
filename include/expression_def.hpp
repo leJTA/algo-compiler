@@ -16,7 +16,7 @@ namespace client {
          qi::_4_type _4;
 
          qi::char_type char_;
-         qi::uint_type uint_;
+         qi::double_type double_;
          qi::_val_type _val;
          qi::raw_type raw;
          qi::lexeme_type lexeme;
@@ -27,6 +27,7 @@ namespace client {
          using qi::on_error;
          using qi::on_success;
          using qi::fail;
+         using qi::no_skip;
          using boost::phoenix::function;
 
          typedef function<client::error_handler<Iterator> > error_handler_function;
@@ -35,15 +36,15 @@ namespace client {
          ///////////////////////////////////////////////////////////////////////
          // Tokens
          logical_or_op.add
-            ("||", ast::op_or)
+            ("or", ast::op_or)
             ;
 
          logical_and_op.add
-            ("&&", ast::op_and)
+            ("and", ast::op_and)
             ;
 
          equality_op.add
-            ("==", ast::op_equal)
+            ("=", ast::op_equal)
             ("!=", ast::op_not_equal)
             ;
 
@@ -61,6 +62,7 @@ namespace client {
 
          multiplicative_op.add
             ("*", ast::op_times)
+            ("^", ast::op_power)
             ("/", ast::op_divide)
             ("%", ast::op_modulo)
             ;
@@ -91,6 +93,8 @@ namespace client {
             ("array_of_string")
             ("true")
             ("false")
+            ("or")
+            ("and")
             ("if")
             ("then")
             ("else")
@@ -151,10 +155,11 @@ namespace client {
             ;
 
          primary_expr =
-                uint_
-            |   identifier
-            |   bool_
-            |   '(' > expr > ')'
+              double_
+            | identifier
+            | bool_
+            | no_skip['"' > *(char_ - '"') > '"']
+            | '(' > expr > ')'
             ;
 
          identifier =
