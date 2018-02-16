@@ -87,7 +87,7 @@ namespace client {
             ("boolean")
             ("character")
             ("string")
-            ("array_of_int")
+            ("array_of_integer")
             ("array_of_double")
             ("array_of_character")
             ("array_of_string")

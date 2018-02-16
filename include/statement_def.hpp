@@ -45,7 +45,7 @@ namespace client {
             ;
 
          identifier =
-                !expr.keywords
+                !lexeme[expr.keywords >> !(alnum | '_')]
             >>  raw[lexeme[(alpha | '_') >> *(alnum | '_')]]
             ;
 

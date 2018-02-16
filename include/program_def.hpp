@@ -9,7 +9,7 @@ namespace client {
 
       template <typename Iterator>
       program<Iterator>::program(error_handler<Iterator>& error_handler)
-      : program::base_type(start), body(error_handler)
+      : program::base_type(start), body(error_handler), vars(error_handler)
       {
          qi::_1_type _1;
          qi::_2_type _2;
@@ -20,32 +20,56 @@ namespace client {
          qi::alpha_type alpha;
          qi::alnum_type alnum;
          qi::raw_type raw;
+         qi::blank_type blank;
+         qi::lit_type lit;
+         qi::double_type double_;
+         qi::bool_type bool_;
 
          using qi::on_error;
          using qi::fail;
+         using qi::eol;
+         using qi::no_skip;
          using boost::phoenix::function;
 
          typedef function<client::error_handler<Iterator> > error_handler_function;
 
          name =
-               !body.expr.keywords
+               !lexeme[body.expr.keywords >> !(alnum | '_')]
             >> raw[lexeme[(alpha | '_') >> *(alnum | '_')]]
             ;
 
          identifier = name;
 
          start =
-               lexeme["algorithm" >> !(alnum | '_')] >> identifier
-            > -(lexeme["constants" >> !(alnum | '_')])
-            > -(lexeme["variables" >> !(alnum | '_')])
+               lexeme["algorithm" >> !(alnum | '_')] > identifier
+            > -(lexeme["constants" >> !(alnum | '_')] /*> constant_declaration_list*/ )
+            > -(vars)
             > -(lexeme["functions" >> !(alnum | '_')])
             > lexeme["begin" >> !(alnum | '_')] > body > lexeme["end" >> !(alnum | '_')]
             ;
 
-            // Error handling: on error in statement_list, call error_handler.
-            on_error<fail>(start,
-               error_handler_function(error_handler)(
-                  "Error! Expecting ", _4, _3));
+         /*
+         constant_declaration_list =
+            +constant_declaration
+            ;
+
+         constant_declaration =
+              type
+            > (
+                  (identifier >> '=' >> (double_ | bool_)) % ','
+              )
+            > no_skip[*blank >> eol]
+            ;
+         */
+         BOOST_SPIRIT_DEBUG_NODES(
+            (body)
+            (identifier)
+         );
+
+         // Error handling: on error in statement_list, call error_handler.
+         on_error<fail>(start,
+            error_handler_function(error_handler)(
+               "Error! Expecting ", _4, _3));
       }
    }
 }

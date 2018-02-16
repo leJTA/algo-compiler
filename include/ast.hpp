@@ -30,6 +30,11 @@ namespace client {
          std::string name;
       };
 
+      struct type {
+         type(std::string const& name = ""): name(name){}
+         std::string name;
+      };
+
       typedef boost::variant<
             nil
           , bool
@@ -89,19 +94,19 @@ namespace client {
 
       struct variable_declaration
       {
-         identifier lhs;
+         type variable_type;
+         std::list<identifier> variable_list;
       };
 
       struct variable_declaration_list : std::list<variable_declaration> {};
       /*
       struct constant_declaration {
-         identifier lhs;
-         int rhs;
+         type constant_type;
+         std::list<std::pair<identifier, operand> > constant_name_value;
       };
 
       struct constant_declaration_list : std::list<constant_declaration> {};
       */
-
       struct read_statement;
       struct write_statement;
       struct if_statement;
@@ -163,7 +168,7 @@ namespace client {
       struct program {
          identifier program_name;
          //constant_declaration_list consts;
-         //variable_declaration_list vars;
+         variable_declaration_list vars;
          statement body;
       };
 
@@ -194,21 +199,29 @@ BOOST_FUSION_ADAPT_STRUCT(
     (client::ast::operand, operand_)
 )
 
+
 BOOST_FUSION_ADAPT_STRUCT(
     client::ast::expression,
     (client::ast::operand, first)
     (std::list<client::ast::operation>, rest)
 )
 
+/*
+BOOST_FUSION_ADAPT_STRUCT(
+   client::ast::type,
+   ()
+)*/
+
 BOOST_FUSION_ADAPT_STRUCT(
     client::ast::variable_declaration,
-    (client::ast::identifier, lhs)
+    (client::ast::type, variable_type)
+    (std::list<client::ast::identifier>, variable_list)
 )
 /*
 BOOST_FUSION_ADAPT_STRUCT(
    client::ast::constant_declaration,
-   (client::ast::identifier, lhs)
-   (int, rhs)
+   (client::ast::type, constant_type)
+   (std::list<std::pair<client::ast::identifier, client::ast::operand> >, constant_name_value)
 )
 */
 BOOST_FUSION_ADAPT_STRUCT(
@@ -259,7 +272,7 @@ BOOST_FUSION_ADAPT_STRUCT(
    client::ast::program,
    (client::ast::identifier, program_name)
 //   (client::ast::constant_declaration_list, consts)
-//   (client::ast::variable_declaration_list, vars)
+   (client::ast::variable_declaration_list, vars)
    (client::ast::statement, body)
 )
 
