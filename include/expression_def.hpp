@@ -88,7 +88,8 @@ namespace client {
             ("character")
             ("string")
             ("array_of_integer")
-            ("array_of_double")
+            ("array_of_real")
+            ("array_of_boolean")
             ("array_of_character")
             ("array_of_string")
             ("true")
@@ -158,6 +159,7 @@ namespace client {
               double_
             | identifier
             | bool_
+            | ('\'' > char_ > '\'')
             | no_skip['"' > *(char_ - '"') > '"']
             | '(' > expr > ')'
             ;

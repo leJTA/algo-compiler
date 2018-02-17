@@ -1,5 +1,5 @@
-#ifndef __VARIABLE_DECLARATION_HPP__
-#define __VARIABLE_DECLARATION_HPP__
+#ifndef __CONSTANT_DECLARATION_HPP__
+#define __CONSTANT_DECLARATION_HPP__
 
 #include "ast.hpp"
 #include "skipper.hpp"
@@ -12,11 +12,11 @@ namespace client {
       namespace ascii = boost::spirit::ascii;
 
       template<typename Iterator>
-      struct variable_declaration
-         : qi::grammar<Iterator, client::ast::variable_declaration_list(), skipper<Iterator> >
+      struct constant_declaration
+         : qi::grammar<Iterator, client::ast::constant_declaration_list(), skipper<Iterator> >
       {
-         variable_declaration(error_handler<Iterator>& error_handler)
-            : variable_declaration::base_type(variable_declaration_list), expr(error_handler)
+         constant_declaration(error_handler<Iterator>& error_handler)
+            : constant_declaration::base_type(constant_declaration_list), expr(error_handler)
          {
             qi::_1_type _1;
             qi::_2_type _2;
@@ -62,28 +62,28 @@ namespace client {
                | lit("array_of_string")
                ;
 
-            variable_declaration_list =
-                 lexeme["variables" >> !(alnum | '_')]
-               > +variable_declaration_
+            constant_declaration_list =
+                 lexeme["constants" >> !(alnum | '_')]
+               > +constant_declaration_
                ;
 
-            variable_declaration_ =
+            constant_declaration_ =
                (
                   (
                        primitive_type
-                     > (identifier % ',')
+                     > ((identifier > '=' >> expr) % ',')
                   )
                   |
                   (
                        array_type
-                     > ((identifier > '[' >> uint_ >> ']') % ',')
+                     > ((identifier > '[' >> (expr % ',') >> ']') % ',')
                   )
                )
                > no_skip[*blank >> eol]
                ;
 
             BOOST_SPIRIT_DEBUG_NODES(
-               (variable_declaration_)
+               (constant_declaration_)
                (primitive_type)
                (array_type)
                (identifier)
@@ -92,23 +92,22 @@ namespace client {
 
             ///////////////////////////////////////////////////////////////////////
             // Error handling: on error in expr, call error_handler.
-            on_error<fail>(variable_declaration_list,
+            on_error<fail>(constant_declaration_list,
             error_handler_function(error_handler)(
                 "Error! Expecting ", _4, _3));
 
          }
 
-         qi::rule<Iterator, ast::variable_declaration(), skipper<Iterator> > variable_declaration_;
-         qi::rule<Iterator, ast::variable_declaration_list(), skipper<Iterator> > variable_declaration_list;
+         qi::rule<Iterator, ast::constant_declaration(), skipper<Iterator> > constant_declaration_;
+         qi::rule<Iterator, ast::constant_declaration_list(), skipper<Iterator> > constant_declaration_list;
          qi::rule<Iterator, ast::type(), skipper<Iterator> > primitive_type;
          qi::rule<Iterator, ast::type(), skipper<Iterator> > array_type;
          qi::rule<Iterator, std::string(), skipper<Iterator> > name;
          qi::rule<Iterator, ast::identifier(), skipper<Iterator> > identifier;
 
-         expression<Iterator> expr; /// used only to retrieve keywords :(
+         expression<Iterator> expr;
       };
    }
 }
 
-
-#endif // __VARIABLE_DECLARATION_HPP__
+#endif // __CONSTANT_DECLARATION_HPP__

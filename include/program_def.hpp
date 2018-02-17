@@ -9,7 +9,7 @@ namespace client {
 
       template <typename Iterator>
       program<Iterator>::program(error_handler<Iterator>& error_handler)
-      : program::base_type(start), body(error_handler), vars(error_handler)
+      : program::base_type(start), body(error_handler), consts(error_handler), vars(error_handler)
       {
          qi::_1_type _1;
          qi::_2_type _2;
@@ -42,25 +42,12 @@ namespace client {
 
          start =
                lexeme["algorithm" >> !(alnum | '_')] > identifier
-            > -(lexeme["constants" >> !(alnum | '_')] /*> constant_declaration_list*/ )
+            > -(consts)
             > -(vars)
             > -(lexeme["functions" >> !(alnum | '_')])
             > lexeme["begin" >> !(alnum | '_')] > body > lexeme["end" >> !(alnum | '_')]
             ;
 
-         /*
-         constant_declaration_list =
-            +constant_declaration
-            ;
-
-         constant_declaration =
-              type
-            > (
-                  (identifier >> '=' >> (double_ | bool_)) % ','
-              )
-            > no_skip[*blank >> eol]
-            ;
-         */
          BOOST_SPIRIT_DEBUG_NODES(
             (body)
             (identifier)

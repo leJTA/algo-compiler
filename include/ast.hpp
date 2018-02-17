@@ -102,18 +102,22 @@ namespace client {
       struct variable_declaration
       {
          variable_declaration_type variable_list;
-         //std::list<identifier> variable_list;
       };
 
       struct variable_declaration_list : std::list<variable_declaration> {};
-      /*
+
+      typedef boost::variant<
+           boost::fusion::vector<type, std::list<boost::fusion::vector<identifier, expression> > >
+         , boost::fusion::vector<type, std::list<boost::fusion::vector<identifier, std::list<expression> > > >
+      >
+      constant_declaration_type;
+
       struct constant_declaration {
-         type constant_type;
-         std::list<std::pair<identifier, operand> > constant_name_value;
+          constant_declaration_type constant_list;
       };
 
       struct constant_declaration_list : std::list<constant_declaration> {};
-      */
+
       struct read_statement;
       struct write_statement;
       struct if_statement;
@@ -124,7 +128,7 @@ namespace client {
 
       typedef boost::variant<
            variable_declaration
-         //, constant_declaration
+         , constant_declaration
          , assignment
          , read_statement
          , write_statement
@@ -174,7 +178,7 @@ namespace client {
 
       struct program {
          identifier program_name;
-         //constant_declaration_list consts;
+         constant_declaration_list consts;
          variable_declaration_list vars;
          statement body;
       };
@@ -223,13 +227,12 @@ BOOST_FUSION_ADAPT_STRUCT(
     client::ast::variable_declaration,
     (client::ast::variable_declaration_type, variable_list)
 )
-/*
+
 BOOST_FUSION_ADAPT_STRUCT(
    client::ast::constant_declaration,
-   (client::ast::type, constant_type)
-   (std::list<std::pair<client::ast::identifier, client::ast::operand> >, constant_name_value)
+   (client::ast::constant_declaration_type, constant_list)
 )
-*/
+
 BOOST_FUSION_ADAPT_STRUCT(
     client::ast::assignment,
     (client::ast::identifier, lhs)
@@ -277,7 +280,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 BOOST_FUSION_ADAPT_STRUCT(
    client::ast::program,
    (client::ast::identifier, program_name)
-//   (client::ast::constant_declaration_list, consts)
+   (client::ast::constant_declaration_list, consts)
    (client::ast::variable_declaration_list, vars)
    (client::ast::statement, body)
 )
