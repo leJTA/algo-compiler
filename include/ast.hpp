@@ -4,6 +4,7 @@
 #include <boost/config/warning_disable.hpp>
 #include <boost/variant/recursive_variant.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
+#include <boost/fusion/container/vector.hpp>
 #include <boost/fusion/include/io.hpp>
 #include <boost/optional.hpp>
 #include <list>
@@ -92,10 +93,16 @@ namespace client {
         expression rhs;
       };
 
+      typedef boost::variant<
+          boost::fusion::vector<type, std::list<identifier> >
+         ,boost::fusion::vector<type, std::list<boost::fusion::vector<identifier, unsigned int> > >
+         >
+         variable_declaration_type;
+
       struct variable_declaration
       {
-         type variable_type;
-         std::list<identifier> variable_list;
+         variable_declaration_type variable_list;
+         //std::list<identifier> variable_list;
       };
 
       struct variable_declaration_list : std::list<variable_declaration> {};
@@ -214,8 +221,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 
 BOOST_FUSION_ADAPT_STRUCT(
     client::ast::variable_declaration,
-    (client::ast::type, variable_type)
-    (std::list<client::ast::identifier>, variable_list)
+    (client::ast::variable_declaration_type, variable_list)
 )
 /*
 BOOST_FUSION_ADAPT_STRUCT(

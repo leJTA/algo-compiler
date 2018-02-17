@@ -28,6 +28,7 @@ namespace client {
             qi::lexeme_type lexeme;
             qi::alpha_type alpha;
             qi::alnum_type alnum;
+            qi::uint_type uint_;
             qi::blank_type blank;
 
             using qi::on_error;
@@ -45,16 +46,18 @@ namespace client {
 
             identifier = name;
 
-            type = (
+            primitive_type =
                  lit("integer")
                | lit("real")
                | lit("boolean")
                | lit("string")
-               | lit("array_of_integer")
+               ;
+
+            array_type =
+                 lit("array_of_integer")
                | lit("array_of_double")
                | lit("array_of_character")
                | lit("array_of_string")
-               )
                ;
 
             variable_declaration_list =
@@ -63,14 +66,24 @@ namespace client {
                ;
 
             variable_declaration_ =
-                 type
-               > (identifier % ',')
+               (
+                  (
+                       primitive_type
+                     > (identifier % ',')
+                  )
+                  |
+                  (
+                       array_type
+                     > ((identifier > '[' > uint_ > ']') % ',')
+                  )
+               )
                > no_skip[*blank >> eol]
                ;
 
             BOOST_SPIRIT_DEBUG_NODES(
                (variable_declaration_)
-               (type)
+               (primitive_type)
+               (array_type)
                (identifier)
             );
 
@@ -85,7 +98,8 @@ namespace client {
 
          qi::rule<Iterator, ast::variable_declaration(), skipper<Iterator> > variable_declaration_;
          qi::rule<Iterator, ast::variable_declaration_list(), skipper<Iterator> > variable_declaration_list;
-         qi::rule<Iterator, ast::type(), skipper<Iterator> > type;
+         qi::rule<Iterator, ast::type(), skipper<Iterator> > primitive_type;
+         qi::rule<Iterator, ast::type(), skipper<Iterator> > array_type;
          qi::rule<Iterator, std::string(), skipper<Iterator> > name;
          qi::rule<Iterator, ast::identifier(), skipper<Iterator> > identifier;
 
