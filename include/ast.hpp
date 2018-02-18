@@ -124,6 +124,7 @@ namespace client {
       struct while_statement;
       struct repeat_until_statement;
       struct for_statement;
+      struct return_statement;
       struct statement_list;
 
       typedef boost::variant<
@@ -136,6 +137,7 @@ namespace client {
          , boost::recursive_wrapper<while_statement>
          , boost::recursive_wrapper<repeat_until_statement>
          , boost::recursive_wrapper<for_statement>
+         , boost::recursive_wrapper<return_statement>
          , boost::recursive_wrapper<statement_list>
         >
       statement;
@@ -176,10 +178,31 @@ namespace client {
          statement body;
       };
 
+      struct return_statement : tagged
+      {
+         expression expr;
+      };
+
+      typedef std::list<boost::fusion::vector<type, identifier> > args_list_type;
+      typedef boost::variant<
+           boost::fusion::vector<identifier, args_list_type, type>
+         , boost::fusion::vector<identifier, args_list_type>
+      >
+      header_type;
+
+      struct function_definition {
+         header_type header;
+         boost::optional<variable_declaration_list> local_vars;
+         statement body;
+      };
+
+      struct function_definition_list : std::list<function_definition> {};
+
       struct program {
          identifier program_name;
-         constant_declaration_list consts;
-         variable_declaration_list vars;
+         boost::optional<constant_declaration_list> consts;
+         boost::optional<variable_declaration_list> vars;
+         boost::optional<function_definition_list> funcs;
          statement body;
       };
 
@@ -216,12 +239,6 @@ BOOST_FUSION_ADAPT_STRUCT(
     (client::ast::operand, first)
     (std::list<client::ast::operation>, rest)
 )
-
-/*
-BOOST_FUSION_ADAPT_STRUCT(
-   client::ast::type,
-   ()
-)*/
 
 BOOST_FUSION_ADAPT_STRUCT(
     client::ast::variable_declaration,
@@ -278,10 +295,23 @@ BOOST_FUSION_ADAPT_STRUCT(
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
+    client::ast::return_statement,
+    (client::ast::expression, expr)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+   client::ast::function_definition,
+   (client::ast::header_type, header)
+   (boost::optional<client::ast::variable_declaration_list>, local_vars)
+   (client::ast::statement, body)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
    client::ast::program,
    (client::ast::identifier, program_name)
-   (client::ast::constant_declaration_list, consts)
-   (client::ast::variable_declaration_list, vars)
+   (boost::optional<client::ast::constant_declaration_list>, consts)
+   (boost::optional<client::ast::variable_declaration_list>, vars)
+   (boost::optional<client::ast::function_definition_list>, funcs)
    (client::ast::statement, body)
 )
 

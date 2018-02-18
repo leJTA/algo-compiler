@@ -3,9 +3,10 @@
 
 #include <boost/spirit/include/qi.hpp>
 
-#include "statement.hpp"
-#include "variable_declaration.hpp"
 #include "constant_declaration.hpp"
+#include "variable_declaration.hpp"
+#include "function_definition.hpp"
+#include "statement.hpp"
 
 namespace client {
    namespace parser {
@@ -19,6 +20,7 @@ namespace client {
          statement<Iterator> body;
          constant_declaration<Iterator> consts;
          variable_declaration<Iterator> vars;
+         function_definition<Iterator> funcs;
          qi::rule<Iterator, std::string(), skipper<Iterator> > name;
          qi::rule<Iterator, ast::identifier(), skipper<Iterator> > identifier;
          qi::rule<Iterator, ast::program(), skipper<Iterator> > start;

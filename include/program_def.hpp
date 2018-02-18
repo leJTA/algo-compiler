@@ -9,7 +9,8 @@ namespace client {
 
       template <typename Iterator>
       program<Iterator>::program(error_handler<Iterator>& error_handler)
-      : program::base_type(start), body(error_handler), consts(error_handler), vars(error_handler)
+      : program::base_type(start), body(error_handler), consts(error_handler)
+        ,vars(error_handler), funcs(error_handler)
       {
          qi::_1_type _1;
          qi::_2_type _2;
@@ -44,7 +45,7 @@ namespace client {
                lexeme["algorithm" >> !(alnum | '_')] > identifier
             > -(consts)
             > -(vars)
-            > -(lexeme["functions" >> !(alnum | '_')])
+            > -(funcs)
             > lexeme["begin" >> !(alnum | '_')] > body > lexeme["end" >> !(alnum | '_')]
             ;
 

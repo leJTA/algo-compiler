@@ -42,6 +42,7 @@ namespace client {
             | while_statement
             | repeat_until_statement
             | for_statement
+            | return_statement
             ;
 
          identifier =
@@ -114,6 +115,11 @@ namespace client {
             > lexeme["do" >> !(alnum | '_')]
             > statement_list
             > lexeme["endfor" >> !(alnum | '_')]
+            ;
+
+         return_statement =
+              lexeme["return" >> !(alnum | '_')]
+            > expr
             ;
 
          // Debugging and error handling and reporting support.

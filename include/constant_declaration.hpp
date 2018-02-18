@@ -76,7 +76,7 @@ namespace client {
                   |
                   (
                        array_type
-                     > ((identifier > '[' >> (expr % ',') >> ']') % ',')
+                     > ((identifier > lit('=') >> '[' >> (expr % ',') >> ']') % ',')
                   )
                )
                > no_skip[*blank >> eol]
