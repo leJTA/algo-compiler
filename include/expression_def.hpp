@@ -80,6 +80,7 @@ namespace client {
             ("functions_and_procedures")
             ("function")
             ("procedure")
+            ("call")
             ("begin")
             ("end")
             ("integer")
@@ -112,6 +113,7 @@ namespace client {
             ("read")
             ("write")
             ("return")
+            ("returns")
             ;
 
          ///////////////////////////////////////////////////////////////////////
@@ -157,12 +159,28 @@ namespace client {
 
          primary_expr =
               double_
+            | function_call
+            | array_element_access
             | identifier
             | bool_
             | ('\'' > char_ > '\'')
             | no_skip['"' > *(char_ - '"') > '"']
             | '(' > expr > ')'
             ;
+
+         array_element_access =
+              (identifier >> '[')
+            > expr
+            > ']'
+            ;
+
+         function_call =
+              (identifier >> '(')
+            > argument_list
+            > ')'
+            ;
+
+         argument_list = -(expr % ',');
 
          identifier =
                 !lexeme[keywords >> !(alnum | '_')]

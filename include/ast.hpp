@@ -23,6 +23,8 @@ namespace client {
 
       struct nil {};
       struct unary;
+      struct array_element_access;
+      struct function_call;
       struct expression;
 
       struct identifier : tagged
@@ -44,6 +46,8 @@ namespace client {
           , std::string
           , identifier
           , boost::recursive_wrapper<unary>
+          , boost::recursive_wrapper<array_element_access>
+          , boost::recursive_wrapper<function_call>
           , boost::recursive_wrapper<expression>
         >
       operand;
@@ -79,6 +83,17 @@ namespace client {
       {
         optoken operator_;
         operand operand_;
+      };
+
+      struct array_element_access {
+         identifier array_name;
+         operand index;
+      };
+
+      struct function_call
+      {
+         identifier function_name;
+         std::list<expression> args;
       };
 
       struct expression
@@ -125,12 +140,11 @@ namespace client {
       struct repeat_until_statement;
       struct for_statement;
       struct return_statement;
+      struct procedure_call_statement;
       struct statement_list;
 
       typedef boost::variant<
-           variable_declaration
-         , constant_declaration
-         , assignment
+           assignment
          , read_statement
          , write_statement
          , boost::recursive_wrapper<if_statement>
@@ -138,6 +152,7 @@ namespace client {
          , boost::recursive_wrapper<repeat_until_statement>
          , boost::recursive_wrapper<for_statement>
          , boost::recursive_wrapper<return_statement>
+         , boost::recursive_wrapper<procedure_call_statement>
          , boost::recursive_wrapper<statement_list>
         >
       statement;
@@ -181,6 +196,11 @@ namespace client {
       struct return_statement : tagged
       {
          expression expr;
+      };
+
+      struct procedure_call_statement {
+         identifier procedure_name;
+         std::list<expression> args;
       };
 
       typedef std::list<boost::fusion::vector<type, identifier> > args_list_type;
@@ -233,6 +253,17 @@ BOOST_FUSION_ADAPT_STRUCT(
     (client::ast::operand, operand_)
 )
 
+BOOST_FUSION_ADAPT_STRUCT(
+   client::ast::array_element_access,
+   (client::ast::identifier, array_name)
+   (client::ast::operand, index)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+   client::ast::function_call,
+   (client::ast::identifier, function_name)
+   (std::list<client::ast::expression>, args)
+)
 
 BOOST_FUSION_ADAPT_STRUCT(
     client::ast::expression,
@@ -297,6 +328,12 @@ BOOST_FUSION_ADAPT_STRUCT(
 BOOST_FUSION_ADAPT_STRUCT(
     client::ast::return_statement,
     (client::ast::expression, expr)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+   client::ast::procedure_call_statement,
+   (client::ast::identifier, procedure_name)
+   (std::list<client::ast::expression>, args)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(

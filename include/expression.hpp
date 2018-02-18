@@ -27,8 +27,9 @@ namespace client {
             ;
 
          qi::rule<Iterator, ast::operand(), skipper<Iterator> > unary_expr, primary_expr;
-         //qi::rule<Iterator, ast::function_call, skipper<Iterator> > function_call;
-         //qi::rule<Iterator, std::list<ast::expression>(), skipper<Iterator> > argument_list;
+         qi::rule<Iterator, ast::array_element_access, skipper<Iterator> > array_element_access;
+         qi::rule<Iterator, ast::function_call, skipper<Iterator> > function_call;
+         qi::rule<Iterator, std::list<ast::expression>(), skipper<Iterator> > argument_list;
          qi::rule<Iterator, std::string(), skipper<Iterator> > identifier;
          qi::symbols<char, ast::optoken>
             logical_or_op, logical_and_op,

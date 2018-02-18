@@ -43,6 +43,7 @@ namespace client {
             | repeat_until_statement
             | for_statement
             | return_statement
+            | procedure_call_statement
             ;
 
          identifier =
@@ -120,6 +121,13 @@ namespace client {
          return_statement =
               lexeme["return" >> !(alnum | '_')]
             > expr
+            ;
+
+         procedure_call_statement =
+              lexeme["call" >> !(alnum | '_')]
+            > (identifier >> '(')
+            > -(expr % ',')
+            > ')'
             ;
 
          // Debugging and error handling and reporting support.

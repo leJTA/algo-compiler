@@ -27,6 +27,7 @@ namespace client {
          qi::rule<Iterator, ast::repeat_until_statement(), skipper<Iterator> > repeat_until_statement;
          qi::rule<Iterator, ast::for_statement(), skipper<Iterator> > for_statement;
          qi::rule<Iterator, ast::return_statement(), skipper<Iterator> > return_statement;
+         qi::rule<Iterator, ast::procedure_call_statement(), skipper<Iterator> > procedure_call_statement;
          qi::rule<Iterator, std::string(), skipper<Iterator> > identifier;
       };
    }
