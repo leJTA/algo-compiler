@@ -105,6 +105,7 @@ namespace algc {
       struct assignment
       {
         identifier lhs;
+        boost::optional<expression> index;
         expression rhs;
       };
 
@@ -282,9 +283,10 @@ BOOST_FUSION_ADAPT_STRUCT(
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-    algc::ast::assignment,
-    (algc::ast::identifier, lhs)
-    (algc::ast::expression, rhs)
+   algc::ast::assignment,
+   (algc::ast::identifier, lhs)
+   (boost::optional<algc::ast::expression>, index)
+   (algc::ast::expression, rhs)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(

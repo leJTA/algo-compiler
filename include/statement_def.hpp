@@ -52,7 +52,7 @@ namespace algc {
             ;
 
          assignment =
-                identifier
+                identifier > -('[' > expr > ']')
             >   ":="
             >   expr
             >   no_skip[*blank >> eol]

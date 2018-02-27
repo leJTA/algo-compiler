@@ -53,6 +53,13 @@ namespace algc {
          //ast.lhs.id = id;
       }
 
+      void operator()(ast::assignment& ast, Iterator pos) const
+      {
+         int id = iters.size();
+         iters.push_back(pos);
+         ast.lhs.id = id;
+      }
+
       std::vector<Iterator>& iters;
    };
 }
