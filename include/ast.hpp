@@ -9,7 +9,7 @@
 #include <boost/optional.hpp>
 #include <list>
 
-namespace client {
+namespace algc {
    namespace ast {
       ///////////////////////////////////////////////////////////////////////////
       //  The AST
@@ -242,114 +242,114 @@ namespace client {
 }
 
 BOOST_FUSION_ADAPT_STRUCT(
-    client::ast::unary,
-    (client::ast::optoken, operator_)
-    (client::ast::operand, operand_)
+    algc::ast::unary,
+    (algc::ast::optoken, operator_)
+    (algc::ast::operand, operand_)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-    client::ast::operation,
-    (client::ast::optoken, operator_)
-    (client::ast::operand, operand_)
+    algc::ast::operation,
+    (algc::ast::optoken, operator_)
+    (algc::ast::operand, operand_)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-   client::ast::array_element_access,
-   (client::ast::identifier, array_name)
-   (client::ast::operand, index)
+   algc::ast::array_element_access,
+   (algc::ast::identifier, array_name)
+   (algc::ast::operand, index)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-   client::ast::function_call,
-   (client::ast::identifier, function_name)
-   (std::list<client::ast::expression>, args)
+   algc::ast::function_call,
+   (algc::ast::identifier, function_name)
+   (std::list<algc::ast::expression>, args)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-    client::ast::expression,
-    (client::ast::operand, first)
-    (std::list<client::ast::operation>, rest)
+    algc::ast::expression,
+    (algc::ast::operand, first)
+    (std::list<algc::ast::operation>, rest)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-    client::ast::variable_declaration,
-    (client::ast::variable_declaration_type, variable_list)
+    algc::ast::variable_declaration,
+    (algc::ast::variable_declaration_type, variable_list)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-   client::ast::constant_declaration,
-   (client::ast::constant_declaration_type, constant_list)
+   algc::ast::constant_declaration,
+   (algc::ast::constant_declaration_type, constant_list)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-    client::ast::assignment,
-    (client::ast::identifier, lhs)
-    (client::ast::expression, rhs)
+    algc::ast::assignment,
+    (algc::ast::identifier, lhs)
+    (algc::ast::expression, rhs)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-    client::ast::read_statement,
-    (client::ast::identifier, variable)
+    algc::ast::read_statement,
+    (algc::ast::identifier, variable)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-    client::ast::write_statement,
-    (std::list<client::ast::expression>, expression_list)
+    algc::ast::write_statement,
+    (std::list<algc::ast::expression>, expression_list)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-    client::ast::if_statement,
-    (client::ast::expression, condition)
-    (client::ast::statement, then)
-    (boost::optional<client::ast::statement>, else_)
+    algc::ast::if_statement,
+    (algc::ast::expression, condition)
+    (algc::ast::statement, then)
+    (boost::optional<algc::ast::statement>, else_)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-    client::ast::while_statement,
-    (client::ast::expression, condition)
-    (client::ast::statement, body)
+    algc::ast::while_statement,
+    (algc::ast::expression, condition)
+    (algc::ast::statement, body)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-    client::ast::repeat_until_statement,
-    (client::ast::statement, body)
-    (client::ast::expression, condition)
+    algc::ast::repeat_until_statement,
+    (algc::ast::statement, body)
+    (algc::ast::expression, condition)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-   client::ast::for_statement,
-   (client::ast::identifier, counter)
-   (client::ast::expression, start)
-   (client::ast::expression, end)
-   (boost::optional<client::ast::expression>, step)
-   (client::ast::statement, body)
+   algc::ast::for_statement,
+   (algc::ast::identifier, counter)
+   (algc::ast::expression, start)
+   (algc::ast::expression, end)
+   (boost::optional<algc::ast::expression>, step)
+   (algc::ast::statement, body)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-    client::ast::return_statement,
-    (client::ast::expression, expr)
+    algc::ast::return_statement,
+    (algc::ast::expression, expr)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-   client::ast::procedure_call_statement,
-   (client::ast::identifier, procedure_name)
-   (std::list<client::ast::expression>, args)
+   algc::ast::procedure_call_statement,
+   (algc::ast::identifier, procedure_name)
+   (std::list<algc::ast::expression>, args)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-   client::ast::function_definition,
-   (client::ast::header_type, header)
-   (boost::optional<client::ast::variable_declaration_list>, local_vars)
-   (client::ast::statement, body)
+   algc::ast::function_definition,
+   (algc::ast::header_type, header)
+   (boost::optional<algc::ast::variable_declaration_list>, local_vars)
+   (algc::ast::statement, body)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-   client::ast::program,
-   (client::ast::identifier, program_name)
-   (boost::optional<client::ast::constant_declaration_list>, consts)
-   (boost::optional<client::ast::variable_declaration_list>, vars)
-   (boost::optional<client::ast::function_definition_list>, funcs)
-   (client::ast::statement, body)
+   algc::ast::program,
+   (algc::ast::identifier, program_name)
+   (boost::optional<algc::ast::constant_declaration_list>, consts)
+   (boost::optional<algc::ast::variable_declaration_list>, vars)
+   (boost::optional<algc::ast::function_definition_list>, funcs)
+   (algc::ast::statement, body)
 )
 
 #endif // __AST_HPP__

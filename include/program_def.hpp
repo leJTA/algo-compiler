@@ -4,7 +4,7 @@
 #include "program.hpp"
 #include "error_handler.hpp"
 
-namespace client {
+namespace algc {
    namespace parser {
 
       template <typename Iterator>
@@ -32,7 +32,7 @@ namespace client {
          using qi::no_skip;
          using boost::phoenix::function;
 
-         typedef function<client::error_handler<Iterator> > error_handler_function;
+         typedef function<algc::error_handler<Iterator> > error_handler_function;
 
          name =
                !lexeme[body.expr.keywords >> !(alnum | '_')]

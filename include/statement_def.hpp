@@ -1,7 +1,7 @@
 #include "statement.hpp"
 #include "error_handler.hpp"
 
-namespace client {
+namespace algc {
    namespace parser {
        template <typename Iterator>
        statement<Iterator>::statement(error_handler<Iterator>& error_handler)
@@ -27,8 +27,8 @@ namespace client {
          using qi::eol;
          using boost::phoenix::function;
 
-         typedef function<client::error_handler<Iterator> > error_handler_function;
-         //typedef function<client::annotation<Iterator> > annotation_function;
+         typedef function<algc::error_handler<Iterator> > error_handler_function;
+         //typedef function<algc::annotation<Iterator> > annotation_function;
 
          statement_list =
             +statement_

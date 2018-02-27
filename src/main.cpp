@@ -42,11 +42,13 @@ int main(int argc, char* argv[])
    iterator_type iter = source_code.begin();
    iterator_type end = source_code.end();
 
-   client::error_handler<iterator_type> error_handler(iter, end);
-   client::parser::skipper<iterator_type> skipper;
-	client::parser::program<iterator_type> prog(error_handler);
+   algc::ast::program ast;
 
-	bool success = phrase_parse(iter, end, prog, skipper);
+   algc::error_handler<iterator_type> error_handler(iter, end);
+   algc::parser::skipper<iterator_type> skipper;
+	algc::parser::program<iterator_type> program(error_handler);
+
+	bool success = phrase_parse(iter, end, program, skipper, ast);
 
 	if (success && iter == end ) {
 		std::cout << "Parsing success." << std::endl;

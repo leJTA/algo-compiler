@@ -6,14 +6,14 @@
 #include "error_handler.hpp"
 #include "expression.hpp"
 
-namespace client {
+namespace algc {
    namespace parser {
       namespace qi = boost::spirit::qi;
       namespace ascii = boost::spirit::ascii;
 
       template<typename Iterator>
       struct variable_declaration
-         : qi::grammar<Iterator, client::ast::variable_declaration_list(), skipper<Iterator> >
+         : qi::grammar<Iterator, algc::ast::variable_declaration_list(), skipper<Iterator> >
       {
          variable_declaration(error_handler<Iterator>& error_handler)
             : variable_declaration::base_type(variable_declaration_list), expr(error_handler)
@@ -37,7 +37,7 @@ namespace client {
             using qi::no_skip;
             using boost::phoenix::function;
 
-            typedef function<client::error_handler<Iterator> > error_handler_function;
+            typedef function<algc::error_handler<Iterator> > error_handler_function;
 
             name =
                  !lexeme[expr.keywords >> !(alnum | '_')]

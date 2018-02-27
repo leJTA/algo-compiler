@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-namespace client
+namespace algc
 {
     ///////////////////////////////////////////////////////////////////////////////
     //  The error handler

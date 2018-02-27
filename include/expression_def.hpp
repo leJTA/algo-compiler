@@ -5,7 +5,7 @@
 #include "error_handler.hpp"
 #include <boost/spirit/include/phoenix_function.hpp>
 
-namespace client {
+namespace algc {
    namespace parser {
       template <typename Iterator>
       expression<Iterator>::expression(error_handler<Iterator>& error_handler) : expression::base_type(expr)
@@ -30,8 +30,8 @@ namespace client {
          using qi::no_skip;
          using boost::phoenix::function;
 
-         typedef function<client::error_handler<Iterator> > error_handler_function;
-         //typedef function<client::annotation<Iterator> > annotation_function;
+         typedef function<algc::error_handler<Iterator> > error_handler_function;
+         //typedef function<algc::annotation<Iterator> > annotation_function;
 
          ///////////////////////////////////////////////////////////////////////
          // Tokens

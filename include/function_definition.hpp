@@ -6,7 +6,7 @@
 #include "statement.hpp"
 #include "variable_declaration.hpp"
 
-namespace client {
+namespace algc {
    namespace parser {
       ///////////////////////////////////////////////////////////////////////////////
       //  The function grammar

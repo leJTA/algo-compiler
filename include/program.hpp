@@ -8,7 +8,7 @@
 #include "function_definition.hpp"
 #include "statement.hpp"
 
-namespace client {
+namespace algc {
    namespace parser {
       namespace qi = boost::spirit::qi;
       namespace ascii = boost::spirit::ascii;

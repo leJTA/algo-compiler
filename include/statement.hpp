@@ -3,7 +3,7 @@
 
 #include "expression.hpp"
 
-namespace client {
+namespace algc {
    namespace parser {
       using boost::spirit::qi::ascii::blank_type;
       ///////////////////////////////////////////////////////////////////////////////
