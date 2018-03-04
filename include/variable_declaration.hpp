@@ -4,6 +4,7 @@
 #include "ast.hpp"
 #include "skipper.hpp"
 #include "error_handler.hpp"
+#include "annotation.hpp"
 #include "expression.hpp"
 
 namespace algc {
@@ -23,6 +24,8 @@ namespace algc {
             qi::_3_type _3;
             qi::_4_type _4;
 
+            qi::_val_type _val;
+
             qi::lit_type lit;
             qi::raw_type raw;
             qi::lexeme_type lexeme;
@@ -38,6 +41,7 @@ namespace algc {
             using boost::phoenix::function;
 
             typedef function<algc::error_handler<Iterator> > error_handler_function;
+            typedef function<algc::annotation<Iterator> > annotation_function;
 
             name =
                  !lexeme[expr.keywords >> !(alnum | '_')]
@@ -96,6 +100,9 @@ namespace algc {
             error_handler_function(error_handler)(
                 "Error! Expecting ", _4, _3));
 
+            // Annotation: on success in start, call annotation.
+            on_success(identifier,
+               annotation_function(error_handler.iters)(_val, _1));
          }
 
          qi::rule<Iterator, ast::variable_declaration(), skipper<Iterator> > variable_declaration_;

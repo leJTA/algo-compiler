@@ -3,6 +3,7 @@
 
 #include "expression.hpp"
 #include "error_handler.hpp"
+#include "annotation.hpp"
 #include <boost/spirit/include/phoenix_function.hpp>
 
 namespace algc {
@@ -15,9 +16,10 @@ namespace algc {
          qi::_3_type _3;
          qi::_4_type _4;
 
+         qi::_val_type _val;
+
          qi::char_type char_;
          qi::double_type double_;
-         qi::_val_type _val;
          qi::raw_type raw;
          qi::lexeme_type lexeme;
          qi::alpha_type alpha;
@@ -31,7 +33,7 @@ namespace algc {
          using boost::phoenix::function;
 
          typedef function<algc::error_handler<Iterator> > error_handler_function;
-         //typedef function<algc::annotation<Iterator> > annotation_function;
+         typedef function<algc::annotation<Iterator> > annotation_function;
 
          ///////////////////////////////////////////////////////////////////////
          // Tokens
@@ -182,10 +184,12 @@ namespace algc {
 
          argument_list = -(expr % ',');
 
-         identifier =
+         name =
                 !lexeme[keywords >> !(alnum | '_')]
             >>  raw[lexeme[(alpha | '_') >> *(alnum | '_')]]
             ;
+
+         identifier = name;
 
          ///////////////////////////////////////////////////////////////////////
          // Debugging and error handling and reporting support.
@@ -210,8 +214,8 @@ namespace algc {
 
          ///////////////////////////////////////////////////////////////////////
          // Annotation: on success in primary_expr, call annotation.
-         //on_success(primary_expr,
-         //   annotation_function(error_handler.iters)(_val, _1));
+         on_success(primary_expr,
+            annotation_function(error_handler.iters)(_val, _1));
       }
    }
 }

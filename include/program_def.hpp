@@ -3,6 +3,7 @@
 
 #include "program.hpp"
 #include "error_handler.hpp"
+#include "annotation.hpp"
 
 namespace algc {
    namespace parser {
@@ -16,6 +17,8 @@ namespace algc {
          qi::_2_type _2;
          qi::_3_type _3;
          qi::_4_type _4;
+
+         qi::_val_type _val;
 
          qi::lexeme_type lexeme;
          qi::alpha_type alpha;
@@ -33,6 +36,7 @@ namespace algc {
          using boost::phoenix::function;
 
          typedef function<algc::error_handler<Iterator> > error_handler_function;
+         typedef function<algc::annotation<Iterator> > annotation_function;
 
          name =
                !lexeme[body.expr.keywords >> !(alnum | '_')]
@@ -58,6 +62,10 @@ namespace algc {
          on_error<fail>(start,
             error_handler_function(error_handler)(
                "Error! Expecting ", _4, _3));
+
+         // Annotation: on success in start, call annotation.
+         on_success(identifier,
+            annotation_function(error_handler.iters)(_val, _1));
       }
    }
 }

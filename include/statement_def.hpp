@@ -1,5 +1,6 @@
 #include "statement.hpp"
 #include "error_handler.hpp"
+#include "annotation.hpp"
 
 namespace algc {
    namespace parser {
@@ -13,6 +14,7 @@ namespace algc {
          qi::_4_type _4;
 
          qi::_val_type _val;
+
          qi::raw_type raw;
          qi::lexeme_type lexeme;
          qi::alpha_type alpha;
@@ -28,7 +30,7 @@ namespace algc {
          using boost::phoenix::function;
 
          typedef function<algc::error_handler<Iterator> > error_handler_function;
-         //typedef function<algc::annotation<Iterator> > annotation_function;
+         typedef function<algc::annotation<Iterator> > annotation_function;
 
          statement_list =
             +statement_
@@ -142,14 +144,18 @@ namespace algc {
             error_handler_function(error_handler)(
                 "Error! Expecting ", _4, _3));
 
-         // Annotation: on success in variable_declaration,
-         // assignment and return_statement, call annotation.
-         /*on_success(variable_declaration,
-            annotation_function(error_handler.iters)(_val, _1));
+         // Annotation: on success in read_statement, assignment,
+         // return_statement, for_statement and procedure_call_statement, call annotation.
          on_success(assignment,
             annotation_function(error_handler.iters)(_val, _1));
+         on_success(read_statement,
+            annotation_function(error_handler.iters)(_val, _1));
          on_success(return_statement,
-            annotation_function(error_handler.iters)(_val, _1));*/
+            annotation_function(error_handler.iters)(_val, _1));
+         on_success(procedure_call_statement,
+            annotation_function(error_handler.iters)(_val, _1));
+         on_success(for_statement,
+            annotation_function(error_handler.iters)(_val, _1));
       }
    }
 }

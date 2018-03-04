@@ -43,8 +43,9 @@ namespace algc {
           , bool
           , double
           , int
-          , std::string
           , identifier
+          , char
+          , std::string
           , boost::recursive_wrapper<unary>
           , boost::recursive_wrapper<array_element_access>
           , boost::recursive_wrapper<function_call>
