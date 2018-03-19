@@ -51,38 +51,6 @@ namespace algc {
          boost::apply_visitor(set_id(id), ast);
       }
 
-      /*
-      void operator()(ast::variable_declaration& ast, Iterator pos) const
-      {
-         boost::apply_visitor([&ast, &pos](auto&& arg) {
-            using T = std::decay_t<decltype(arg)>;
-            if constexpr (std::is_same_v<T, boost::fusion::vector<type, std::list<identifier> > >) {
-               for (ast::identifier& ident, boost::fusion::at_c<1>(arg)) {
-                  int id = iters.size();
-                  iters.push_back(pos);
-                  ident.id = id;
-               }
-            } else { /// std::is_same_v<T, boost::fusion::vector<type, std::list<boost::fusion::vector<identifier, unsigned int> > > >)
-               for (fusion::vector<identifier, unsigned int>& id_size, boost::fusion::at_c<1>(arg)) {
-                  int id = iters.size();
-                  iters.push_back(pos);
-                  boost::fusion::at_c<0>(id_size).id = id;
-               }
-            }
-         }, ast.variable_list);
-      }
-
-      void operator()(ast::constant_declaration& ast, Iterator pos)
-      {
-         boost::apply_visitor([&ast, &pos](auto&& arg) {
-            for (ast::identifier& id_expr, boost::fusion::at_c<1>(arg)) {
-               int id = iters.size();
-               iters.push_back(pos);
-               boost::fusion::at_c<0>(id_expr).id = id;
-            }
-         }, ast.constant_list);
-      }
-      */
       void operator()(ast::assignment& ast, Iterator pos) const
       {
          int id = iters.size();

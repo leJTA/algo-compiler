@@ -21,20 +21,36 @@ namespace algc {
                 // (not really part of the AST.)
       };
 
+      enum type {
+         t_boolean = 1,
+         t_char,
+         t_integer,
+         t_real,
+         t_string,
+         t_array_of_integer,
+         t_array_of_real,
+         t_array_of_char,
+         t_array_of_string
+      };
+
+      struct typed {
+         type t; // type attribute for the identifiers in the AST
+      };
+
       struct nil {};
       struct unary;
       struct array_element_access;
       struct function_call;
       struct expression;
 
-      struct identifier : tagged
+      struct identifier : tagged, typed
       {
          identifier(std::string const& name = "") : name(name) {}
          std::string name;
       };
 
-      struct type {
-         type(std::string const& name = ""): name(name){}
+      struct type_id {
+         type_id(std::string const& name = ""): name(name){}
          std::string name;
       };
 
@@ -58,7 +74,6 @@ namespace algc {
         op_plus,
         op_minus,
         op_times,
-        op_power,
         op_divide,
         op_modulo,
         op_positive,
@@ -111,8 +126,8 @@ namespace algc {
       };
 
       typedef boost::variant<
-          boost::fusion::vector<type, std::list<identifier> >
-         ,boost::fusion::vector<type, std::list<boost::fusion::vector<identifier, unsigned int> > >
+          boost::fusion::vector<type_id, std::list<identifier> >
+         ,boost::fusion::vector<type_id, std::list<boost::fusion::vector<identifier, unsigned int> > >
          >
          variable_declaration_type;
 
@@ -124,8 +139,8 @@ namespace algc {
       struct variable_declaration_list : std::list<variable_declaration> {};
 
       typedef boost::variant<
-           boost::fusion::vector<type, std::list<boost::fusion::vector<identifier, expression> > >
-         , boost::fusion::vector<type, std::list<boost::fusion::vector<identifier, std::list<expression> > > >
+           boost::fusion::vector<type_id, std::list<boost::fusion::vector<identifier, expression> > >
+         , boost::fusion::vector<type_id, std::list<boost::fusion::vector<identifier, std::list<expression> > > >
       >
       constant_declaration_type;
 
@@ -205,9 +220,9 @@ namespace algc {
          std::list<expression> args;
       };
 
-      typedef std::list<boost::fusion::vector<type, identifier> > args_list_type;
+      typedef std::list<boost::fusion::vector<type_id, identifier> > args_list_type;
       typedef boost::variant<
-           boost::fusion::vector<identifier, args_list_type, type>
+           boost::fusion::vector<identifier, args_list_type, type_id>
          , boost::fusion::vector<identifier, args_list_type>
       >
       header_type;

@@ -21,7 +21,7 @@ namespace algc {
         qi::rule<Iterator, std::string(), skipper<Iterator> > name;
         qi::rule<Iterator, ast::identifier(), skipper<Iterator> > identifier;
         qi::rule<Iterator, ast::args_list_type(), skipper<Iterator> > argument_list;
-        qi::rule<Iterator, ast::type(), skipper<Iterator> > type;
+        qi::rule<Iterator, ast::type_id(), skipper<Iterator> > type;
         variable_declaration<Iterator> vars;
         statement<Iterator> body;
       };

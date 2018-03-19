@@ -64,7 +64,6 @@ namespace algc {
 
          multiplicative_op.add
             ("*", ast::op_times)
-            ("^", ast::op_power)
             ("/", ast::op_divide)
             ("%", ast::op_modulo)
             ;

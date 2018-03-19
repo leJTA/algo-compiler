@@ -107,8 +107,8 @@ namespace algc {
 
          qi::rule<Iterator, ast::variable_declaration(), skipper<Iterator> > variable_declaration_;
          qi::rule<Iterator, ast::variable_declaration_list(), skipper<Iterator> > variable_declaration_list;
-         qi::rule<Iterator, ast::type(), skipper<Iterator> > primitive_type;
-         qi::rule<Iterator, ast::type(), skipper<Iterator> > array_type;
+         qi::rule<Iterator, ast::type_id(), skipper<Iterator> > primitive_type;
+         qi::rule<Iterator, ast::type_id(), skipper<Iterator> > array_type;
          qi::rule<Iterator, std::string(), skipper<Iterator> > name;
          qi::rule<Iterator, ast::identifier(), skipper<Iterator> > identifier;
 

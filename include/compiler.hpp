@@ -13,10 +13,14 @@
 
 namespace algc {
    namespace code_gen {
+      /*
       struct program {
+         function(std::vector<int>& code, int nargs)
+            : code(code), address(code.size()), size_(0), nargs_(nargs) {}
+
 
       };
-
+      */
       struct function {
 
       };
