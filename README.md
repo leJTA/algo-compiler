@@ -12,8 +12,8 @@ An algorithm compiler
     
 		$ mkdir build
 		$ cd build
-    $ cmake -DCMAKE_BUILD_TYPE=Release ..
-    $ make
+    		$ cmake -DCMAKE_BUILD_TYPE=Release ..
+    		$ make
 
 3. Running
 
