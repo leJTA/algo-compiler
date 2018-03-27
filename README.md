@@ -1,16 +1,16 @@
-# algo_compiler
+## algo_compiler
 An algorithm compiler
 
-#Requirement
+## Requirement
 boost.spirit include files
 
-#How to compile?
+## How to compile?
 run : 
 mkdir build
 cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
 make
 
-#How to run
+## How to run
 cd bin/Release
 ./algo_compiler <file_name>
