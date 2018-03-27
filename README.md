@@ -24,32 +24,32 @@ Example
 --------
 Here is an example of a preogram that calculate **x** to the power of **n**:
 
-		algorithm power_calculation
+	algorithm power_calculation
+	variables
+		real x
+		integer n
+	functions_and_procedures
+		function power(real x, integer n) returns real
 		variables
-			real x
-			integer n
-		functions_and_procedures
-			function power(real x, integer n) returns real
-			variables
-				real result
-				integer i
-			begin
-				if n = 0 then
-					return 1
-				endif
-				i := 0
-				result := 1
-				while i < n do
-					result := x * result
-				endwhile
-				return result
-
-			end	/* end function */
-
+			real result
+			integer i
 		begin
-			write("Please enter a number and an integer")
-			read(x)
-			read(n)
-			write(x, "^", n, " = ", power(x, n))
+			if n = 0 then
+				return 1
+			endif
+			i := 0
+			result := 1
+			while i < n do
+				result := x * result
+			endwhile
+			return result
 
-		end	/* end algorithm */
+		end	/* end function */
+
+	begin
+		write("Please enter a number and an integer")
+		read(x)
+		read(n)
+		write(x, "^", n, " = ", power(x, n))
+
+	end	/* end algorithm */
