@@ -1,17 +1,15 @@
 # algo_compiler
 An algorithm compiler
 
-Documentation
-----------------------
 1. Requirement
-boost.spirit include files.
+  boost.spirit include files.
 
 2. Compiling
-run in terminal the following commands: 
-  $ mkdir build
-  $ cd build
-  $ cmake -DCMAKE_BUILD_TYPE=Release ..
-  $ make
+  run in terminal the following commands: 
+    $ mkdir build
+    $ cd build
+    $ cmake -DCMAKE_BUILD_TYPE=Release ..
+    $ make
 
 3. Running
   $ cd bin/Release
