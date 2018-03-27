@@ -1,8 +1,10 @@
 # algo_compiler
 An algorithm compiler
 
+Documentation
+----------------------
 1. Requirement
-boost.spirit include files
+boost.spirit include files.
 
 2. Compiling
 run in terminal the following commands: 
