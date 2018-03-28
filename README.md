@@ -22,7 +22,7 @@ An algorithm compiler
 
 Example
 --------
-Here is an example of a preogram that calculate **x** to the power of **n**:
+Here is an example of a preogram that calculates **x** to the power of **n**:
 
 	algorithm power_calculation
 	variables
