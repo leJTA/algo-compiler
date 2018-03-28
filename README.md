@@ -1,6 +1,6 @@
 # algo_compiler
 
-An algorithm compiler
+algo_compiler is a program that compiles and executes source code written in an algorithmic language. It was done in C ++ using the **boost.spirit** (1.66.0) library.
 
 1. Requirement 
 
@@ -10,7 +10,7 @@ Completed tasks:
 - [ ] type_checking (in progress)
 - [ ] execution
 
-2. Compiling
+2. How to build
 
 Run in terminal the following commands: 
 ```
@@ -20,7 +20,7 @@ $ cmake -DCMAKE_BUILD_TYPE=Release ..
 $ make
 ```
 
-3. Running
+3. How to execute
 ```
 $ cd bin/Release
 $ ./algo_compiler <file_name>
