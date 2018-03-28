@@ -1,5 +1,5 @@
-algo_compiler
-------------
+# algo_compiler
+
 An algorithm compiler
 
 1. Requirement 
@@ -8,48 +8,63 @@ An algorithm compiler
 
 2. Compiling
 
-	run in terminal the following commands: 
-   	
-		$ mkdir build
-		$ cd build
-    	$ cmake -DCMAKE_BUILD_TYPE=Release ..
-    	$ make
+run in terminal the following commands: 
+```
+$ mkdir build
+$ cd build
+$ cmake -DCMAKE_BUILD_TYPE=Release ..
+$ make
+```
 
 3. Running
+```
+$ cd bin/Release
+$ ./algo_compiler <file_name>
+```
 
-        $ cd bin/Release
-        $ ./algo_compiler <file_name>
+# Example
 
-Example
---------
 Here is an example of a preogram that calculates **x** to the power of **n**:
 
-	algorithm power_calculation
+```
+algorithm power_calculation
+variables
+	real x
+	integer n
+functions_and_procedures
+	function power(real x, integer n) returns real
 	variables
-		real x
-		integer n
-	functions_and_procedures
-		function power(real x, integer n) returns real
-		variables
-			real result
-			integer i
-		begin
-			if n = 0 then
-				return 1
-			endif
-			i := 0
-			result := 1
-			while i < n do
-				result := x * result
-			endwhile
-			return result
-
-		end	/* end function */
-
+		real result
+		integer i
 	begin
-		write("Please enter a number and an integer")
-		read(x)
-		read(n)
-		write(x, "^", n, " = ", power(x, n))
+		if n = 0 then
+			return 1
+		endif
+		i := 0
+		result := 1
+		while i < n do
+			result := x * result
+		endwhile
+		return result
 
-	end	/* end algorithm */
+	end	/* end function */
+
+begin
+	write("Please enter a number and an integer")
+	read(x)
+	read(n)
+	write(x, "^", n, " = ", power(x, n))
+
+end	/* end algorithm */
+```
+- [x] @mentions, #refs, [links](), **formatting**, and <del>tags</del> supported
+- [x] list syntax required (any unordered or ordered list supported)
+- [x] this is a complete item
+- [ ] this is an incomplete item
+
+
+
+```sequence
+Alice->Bob: Hello, how are you?
+Note right of Bob: Bob thinks
+Bob-->Alice: I am goog thank!
