@@ -1,32 +1,37 @@
 # algo_compiler
 
-algo_compiler is a program that compiles and executes source code written in an algorithmic language. It was done in C ++ using the **boost.spirit** (1.66.0) library.
+algo_compiler is a program that compiles and executes source code written in an algorithmic language.
 
-1. Requirement 
+## Installation
 
-**boost.spirit** include files.
+The algo compiler requires the `boost.spirit` library to be compiled.
 
-2. How to build
+Clone GitHub repository and use CMake and Make to build the project.
 
-Run in terminal the following commands: 
 ```
+$ git clone https://github.com/leJTA/algo_compiler.git
+$ cd algo_compiler
 $ mkdir build
 $ cd build
 $ cmake -DCMAKE_BUILD_TYPE=Release ..
 $ make
 ```
 
-3. How to execute
+## Usage
+
+Go to the location of the binary and run it passing the file path of the file that contain the code as the argument.
+
 ```
 $ cd bin/Release
-$ ./algo_compiler <file_name>
+$ ./algo_compiler <file_path>
 ```
 
-# Example
+## Example
 
-Here is an example of a preogram that calculates **x** to the power of **n**:
+Here is an example of a program that calculates **x** to the power of **n**:
 
 ```
+/* file power.txt */
 algorithm power_calculation
 variables
 	real x
@@ -57,7 +62,3 @@ begin
 
 end	/* end algorithm */
 ```
-4. Completed tasks
-- [x] parsing
-- [ ] type_checking (in progress)
-- [ ] execution
