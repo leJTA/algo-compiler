@@ -5,10 +5,6 @@ algo_compiler is a program that compiles and executes source code written in an 
 1. Requirement 
 
 **boost.spirit** include files.
-Completed tasks:
-- [x] parsing
-- [ ] type_checking (in progress)
-- [ ] execution
 
 2. How to build
 
@@ -61,3 +57,7 @@ begin
 
 end	/* end algorithm */
 ```
+4. Completed tasks
+- [x] parsing
+- [ ] type_checking (in progress)
+- [ ] execution
