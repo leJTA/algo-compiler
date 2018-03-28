@@ -4,11 +4,15 @@ An algorithm compiler
 
 1. Requirement 
 
-	**boost.spirit** include files.
+**boost.spirit** include files.
+Completed tasks:
+- [x] parsing
+- [ ] type_checking (in progress)
+- [ ] execution
 
 2. Compiling
 
-run in terminal the following commands: 
+Run in terminal the following commands: 
 ```
 $ mkdir build
 $ cd build
@@ -57,14 +61,3 @@ begin
 
 end	/* end algorithm */
 ```
-- [x] @mentions, #refs, [links](), **formatting**, and <del>tags</del> supported
-- [x] list syntax required (any unordered or ordered list supported)
-- [x] this is a complete item
-- [ ] this is an incomplete item
-
-
-
-```sequence
-Alice->Bob: Hello, how are you?
-Note right of Bob: Bob thinks
-Bob-->Alice: I am goog thank!
