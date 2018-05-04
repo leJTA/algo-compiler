@@ -22,14 +22,16 @@ namespace algc {
       };
 
       enum type {
-         t_boolean = 1,
-         t_char,
+         t_invalid = 0,
+         t_boolean,
+         t_character,
          t_integer,
          t_real,
          t_string,
+         t_array_boolean,
          t_array_of_integer,
          t_array_of_real,
-         t_array_of_char,
+         t_array_of_character,
          t_array_of_string
       };
 
@@ -49,10 +51,7 @@ namespace algc {
          std::string name;
       };
 
-      struct type_id {
-         type_id(std::string const& name = ""): name(name){}
-         std::string name;
-      };
+      typedef std::string type_name ;
 
       typedef boost::variant<
             nil
@@ -126,8 +125,8 @@ namespace algc {
       };
 
       typedef boost::variant<
-          boost::fusion::vector<type_id, std::list<identifier> >
-         ,boost::fusion::vector<type_id, std::list<boost::fusion::vector<identifier, unsigned int> > >
+          boost::fusion::vector<type_name, std::list<identifier> >
+         ,boost::fusion::vector<type_name, std::list<boost::fusion::vector<identifier, unsigned int> > >
          >
          variable_declaration_type;
 
@@ -139,8 +138,8 @@ namespace algc {
       struct variable_declaration_list : std::list<variable_declaration> {};
 
       typedef boost::variant<
-           boost::fusion::vector<type_id, std::list<boost::fusion::vector<identifier, expression> > >
-         , boost::fusion::vector<type_id, std::list<boost::fusion::vector<identifier, std::list<expression> > > >
+           boost::fusion::vector<type_name, std::list<boost::fusion::vector<identifier, expression> > >
+         , boost::fusion::vector<type_name, std::list<boost::fusion::vector<identifier, std::list<expression> > > >
       >
       constant_declaration_type;
 
@@ -220,9 +219,9 @@ namespace algc {
          std::list<expression> args;
       };
 
-      typedef std::list<boost::fusion::vector<type_id, identifier> > args_list_type;
+      typedef std::list<boost::fusion::vector<type_name, identifier> > args_list_type;
       typedef boost::variant<
-           boost::fusion::vector<identifier, args_list_type, type_id>
+           boost::fusion::vector<identifier, args_list_type, type_name>
          , boost::fusion::vector<identifier, args_list_type>
       >
       header_type;

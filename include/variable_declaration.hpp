@@ -5,6 +5,7 @@
 #include "skipper.hpp"
 #include "error_handler.hpp"
 #include "annotation.hpp"
+#include "type_setting.hpp"
 #include "expression.hpp"
 
 namespace algc {
@@ -26,6 +27,7 @@ namespace algc {
 
             qi::_val_type _val;
 
+            qi::string_type string_;
             qi::lit_type lit;
             qi::raw_type raw;
             qi::lexeme_type lexeme;
@@ -35,13 +37,16 @@ namespace algc {
             qi::blank_type blank;
 
             using qi::on_error;
+            using qi::on_success;
             using qi::fail;
             using qi::eol;
             using qi::no_skip;
+
             using boost::phoenix::function;
 
             typedef function<algc::error_handler<Iterator> > error_handler_function;
             typedef function<algc::annotation<Iterator> > annotation_function;
+            typedef function<algc::type_setting<Iterator> > type_setting_function;
 
             name =
                  !lexeme[expr.keywords >> !(alnum | '_')]
@@ -51,19 +56,19 @@ namespace algc {
             identifier = name;
 
             primitive_type =
-                 lit("integer")
-               | lit("real")
-               | lit("boolean")
-               | lit("character")
-               | lit("string")
+                 string_("integer")
+               | string_("real")
+               | string_("boolean")
+               | string_("character")
+               | string_("string")
                ;
 
             array_type =
-                 lit("array_of_integer")
-               | lit("array_of_real")
-               | lit("array_of_boolean")
-               | lit("array_of_character")
-               | lit("array_of_string")
+                 string_("array_of_integer")
+               | string_("array_of_real")
+               | string_("array_of_boolean")
+               | string_("array_of_character")
+               | string_("array_of_string")
                ;
 
             variable_declaration_list =
@@ -103,12 +108,16 @@ namespace algc {
             // Annotation: on success in start, call annotation.
             on_success(identifier,
                annotation_function(error_handler.iters)(_val, _1));
+
+            // Type_setting: on success in variable_declaration, call type_setting function
+            on_success(variable_declaration_,
+               type_setting_function(error_handler.iters)(_val, _1));
          }
 
          qi::rule<Iterator, ast::variable_declaration(), skipper<Iterator> > variable_declaration_;
          qi::rule<Iterator, ast::variable_declaration_list(), skipper<Iterator> > variable_declaration_list;
-         qi::rule<Iterator, ast::type_id(), skipper<Iterator> > primitive_type;
-         qi::rule<Iterator, ast::type_id(), skipper<Iterator> > array_type;
+         qi::rule<Iterator, ast::type_name(), skipper<Iterator> > primitive_type;
+         qi::rule<Iterator, ast::type_name(), skipper<Iterator> > array_type;
          qi::rule<Iterator, std::string(), skipper<Iterator> > name;
          qi::rule<Iterator, ast::identifier(), skipper<Iterator> > identifier;
 
