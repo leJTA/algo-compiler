@@ -9,7 +9,7 @@ The algo compiler requires the `boost.spirit` library to be compiled.
 Clone GitHub repository and use CMake and Make to build the project.
 
 ```
-$ git clone https://github.com/leJTA/algo_compiler.git
+$ git clone https://bitbucket.org/le_JTA/algo_compiler/
 $ cd algo_compiler
 $ mkdir build
 $ cd build
