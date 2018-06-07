@@ -6,7 +6,7 @@ algo_compiler is a program that compiles and executes source code written in an 
 
 The algo compiler requires the `boost.spirit` library to be compiled.
 
-Clone GitHub repository and use CMake and Make to build the project.
+Clone Bitbucket repository and use CMake and Make to build the project.
 
 ```
 $ git clone https://bitbucket.org/le_JTA/algo_compiler/
