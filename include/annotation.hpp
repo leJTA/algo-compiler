@@ -32,7 +32,7 @@ namespace algc {
             x.id = id;
          }
 
-         void operator()(ast::array_element_access& x) const
+         void operator()(ast::array_access& x) const
          {
             x.array_name.id = id;
          }

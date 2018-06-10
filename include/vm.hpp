@@ -14,6 +14,7 @@ namespace algc {
       op_sub,         //  subtract top two stack entries
       op_mul,         //  multiply top two stack entries
       op_div,         //  divide top two stack entries
+      op_mod,
 
       op_not,         //  boolean negate the top stack entry
       op_eq,          //  compare the top two stack entries for ==
@@ -29,17 +30,16 @@ namespace algc {
       op_load,        //  load a variable
       op_store,       //  store a variable
 
-      op_sload,       //  load an array
-      op_sstore,      //  store an array
+      op_aload,       //  load an array
+      op_astore,      //  store an array
 
-      op_int8,        //  push constant char into the stack
-      op_int32,       //  push constant integer into the stack
-      op_float64      //  push constant float into the stack
-      op_true,        //  push constant 0 into the stack
-      op_false,       //  push constant 1 into the stack
+      op_push_int,    //  push constant integer into the stack
+      op_push_float,  //  push constant float into the stack
+      op_push_str,	 //  push constant string into the stack
+      op_push_true,   //  push constant 0 into the stack
+      op_push_false,  //  push constant 1 into the stack
 
-      op_jump_if,     //  jump to a relative position in the code if top stack
-                     //  evaluates to false
+      op_jump_if,     //  jump to a relative position in the code if top stack evaluates to false
       op_jump,        //  jump to a relative position in the code
 
       op_stk_adj,     //  adjust the stack (for args and locals)

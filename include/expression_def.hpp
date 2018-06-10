@@ -161,7 +161,7 @@ namespace algc {
          primary_expr =
               double_
             | function_call
-            | array_element_access
+            | array_access
             | identifier
             | bool_
             | ('\'' > char_ > '\'')
@@ -169,7 +169,7 @@ namespace algc {
             | '(' > expr > ')'
             ;
 
-         array_element_access =
+         array_access =
               (identifier >> '[')
             > expr
             > ']'

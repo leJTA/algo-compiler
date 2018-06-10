@@ -22,17 +22,17 @@ namespace algc {
       };
 
       enum type {
-         t_invalid = 0,
-         t_boolean,
-         t_character,
-         t_integer,
-         t_real,
-         t_string,
-         t_array_boolean,
-         t_array_of_integer,
-         t_array_of_real,
-         t_array_of_character,
-         t_array_of_string
+         invalid_type = 0,
+         boolean_type,
+         character_type,
+         integer_type,
+         real_type,
+         string_type,
+         array_of_boolean_type,
+         array_of_integer_type,
+         array_of_real_type,
+         array_of_character_type,
+         array_of_string_type
       };
 
       struct typed {
@@ -41,7 +41,7 @@ namespace algc {
 
       struct nil {};
       struct unary;
-      struct array_element_access;
+      struct array_access;
       struct function_call;
       struct expression;
 
@@ -62,7 +62,7 @@ namespace algc {
           , char
           , std::string
           , boost::recursive_wrapper<unary>
-          , boost::recursive_wrapper<array_element_access>
+          , boost::recursive_wrapper<array_access>
           , boost::recursive_wrapper<function_call>
           , boost::recursive_wrapper<expression>
         >
@@ -100,7 +100,7 @@ namespace algc {
         operand operand_;
       };
 
-      struct array_element_access {
+      struct array_access {
          identifier array_name;
          operand index;
       };
@@ -270,7 +270,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-   algc::ast::array_element_access,
+   algc::ast::array_access,
    (algc::ast::identifier, array_name)
    (algc::ast::operand, index)
 )

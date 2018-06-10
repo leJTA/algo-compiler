@@ -77,27 +77,27 @@ namespace algc {
          ast::type get_type(const std::string& type_name) const
          {
             if (type_name.compare("boolean") == 0) {
-               return ast::type::t_boolean;
+               return ast::type::boolean_type;
             } else if (type_name.compare("integer") == 0) {
-               return ast::type::t_boolean;
+               return ast::type::boolean_type;
             } else if (type_name.compare("character") == 0) {
-               return ast::type::t_character;
+               return ast::type::character_type;
             } else if (type_name.compare("real") == 0) {
-               return ast::type::t_real;
+               return ast::type::real_type;
             } else if (type_name.compare("string") == 0) {
-               return ast::type::t_string;
+               return ast::type::string_type;
             } else if (type_name.compare("array_of_integer") == 0) {
-               return ast::type::t_array_of_integer;
+               return ast::type::array_of_integer_type;
             } else if (type_name.compare("array_of_real") == 0) {
-               return ast::type::t_array_of_real;
+               return ast::type::array_of_real_type;
             } else if (type_name.compare("array_of_boolean") == 0) {
-               return ast::type::t_array_boolean;
+               return ast::type::array_of_boolean_type;
             } else if (type_name.compare("array_of_character") == 0) {
-               return ast::type::t_array_of_character;
+               return ast::type::array_of_character_type;
             } else if (type_name.compare("array_of_string") == 0) {
-               return ast::type::t_array_of_string;
+               return ast::type::array_of_string_type;
             } else {
-               return ast::type::t_invalid;
+               return ast::type::invalid_type;
             }
          }
       };
