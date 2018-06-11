@@ -57,7 +57,7 @@ namespace algc {
             nil
           , bool
           , double
-          , int
+          , unsigned int
           , identifier
           , char
           , std::string

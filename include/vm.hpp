@@ -42,6 +42,9 @@ namespace algc {
       op_jump_if,     //  jump to a relative position in the code if top stack evaluates to false
       op_jump,        //  jump to a relative position in the code
 
+      op_read,			 //  read from the standard input
+      op_print,		 //  print on the standard output
+
       op_stk_adj,     //  adjust the stack (for args and locals)
       op_call,        //  function call
       op_return       //  return from function
