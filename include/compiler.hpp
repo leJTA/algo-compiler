@@ -15,16 +15,59 @@
 
 namespace algc {
    namespace code_gen {
+
    	using data = std::variant<
-			  byte_code
+			  byte_code	// opcode
+			, bool		// boolean value
+			, char		// char value
 			, int			// integer value
 			, size_t		// offset
 			, double		// float value
 			, const char*	// string value
 			>;
 
-      struct function {
+		using value = std::variant<
+			  bool		// boolean_type
+			, char		// character_type
+			, int			// integer_type
+			, double		// real_type
+			, std::string		// string_type
+			, std::vector<bool>	// array_of_boolean_type
+			, std::vector<char>	// array_of_integer_type
+			, std::vector<int>	// array_of_real_type
+			, std::vector<double>// array_of_character_type
+			, std::vector<std::string>	// array_of_string_type
+			>;
 
+      struct function {
+			function(std::vector<data>& code, int nargs)
+			 : code(code), address(code.size()), size_(0), nargs_(nargs) {}
+
+			template<typename T> void op(T a);
+			template<typename T> void op(T a, T b);
+			template<typename T> void op(T a, T b, T c);
+
+			data& operator[](std::size_t i) { return code[address+i]; }
+			const data& operator[](std::size_t i) const { return code[address+i]; }
+			std::size_t size() const { return size_; }
+			std::size_t get_address() const { return address; }
+
+			int nargs() const { return nargs_; }
+			int nvars() const { return variables.size(); }
+			int const* find_var(std::string const& name) const;
+			void add_var(std::string const& name);
+			void link_to(std::string const& name, std::size_t address);
+
+			void print_assembler() const;
+
+			private:
+
+			std::map<std::string, value> variables;
+			std::map<std::size_t, std::string> function_calls;
+			std::vector<data>& code;
+			std::size_t address;
+			std::size_t size_;
+			std::size_t nargs_;
       };
 
       struct compiler {
@@ -67,6 +110,8 @@ namespace algc {
 			using function_table = std::map<std::string, std::shared_ptr<code_gen::function> >;
 
 			std::vector<data> code;
+			std::map<std::string, value> global_constants;
+
 			code_gen::function* current;
 			std::string current_function_name;
 			function_table functions;
