@@ -22,8 +22,7 @@ namespace algc {
       };
 
       enum type {
-         invalid_type = 0,
-         boolean_type,
+         boolean_type = 0,
          character_type,
          integer_type,
          real_type,
@@ -32,7 +31,8 @@ namespace algc {
          array_of_integer_type,
          array_of_real_type,
          array_of_character_type,
-         array_of_string_type
+         array_of_string_type,
+         invalid_type
       };
 
       struct typed {
@@ -57,7 +57,7 @@ namespace algc {
             nil
           , bool
           , double
-          , unsigned int
+          , int
           , identifier
           , char
           , std::string
@@ -221,8 +221,8 @@ namespace algc {
 
       typedef std::list<boost::fusion::vector<type_name, identifier> > args_list_type;
       typedef boost::variant<
-           boost::fusion::vector<identifier, args_list_type, type_name>
-         , boost::fusion::vector<identifier, args_list_type>
+           boost::fusion::vector<identifier, args_list_type>
+			, boost::fusion::vector<identifier, args_list_type, type_name>
       >
       header_type;
 

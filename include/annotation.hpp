@@ -2,9 +2,7 @@
 #define __ANNOTATION_HPP__
 
 #include <map>
-#include <boost/variant/apply_visitor.hpp>
 #include <boost/type_traits/is_base_of.hpp>
-#include <type_traits>
 #include <boost/mpl/bool.hpp>
 #include "ast.hpp"
 
@@ -28,14 +26,14 @@ namespace algc {
          }
 
          void operator()(ast::identifier& x) const
-         {
+			{
             x.id = id;
          }
 
          void operator()(ast::array_access& x) const
          {
             x.array_name.id = id;
-         }
+			}
 
          template <typename T>
          void operator()(T& x) const

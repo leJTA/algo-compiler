@@ -3,6 +3,7 @@
 
 #include "program.hpp"
 #include "skipper.hpp"
+#include "compiler.hpp"
 
 using namespace std;
 
@@ -13,10 +14,10 @@ int main(int argc, char* argv[])
     {
         filename = argv[1];
     }
-    else
-    {
-        std::cerr << "Error: No input file provided." << std::endl;
-        return 1;
+    else {
+    	filename = "test.txt";
+		std::cerr << "Error: No input file provided." << std::endl;
+        //return 1;
     }
 
     std::ifstream in(filename, std::ios_base::in);
@@ -28,8 +29,8 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-   std::string source_code; // We will read the contents here.
-   in.unsetf(std::ios::skipws); // No white space skipping!
+   std::string source_code; 		// We will read the contents here.
+   in.unsetf(std::ios::skipws); 	// No white space skipping!
    std::copy(
       std::istream_iterator<char>(in),
       std::istream_iterator<char>(),
@@ -42,18 +43,28 @@ int main(int argc, char* argv[])
    iterator_type iter = source_code.begin();
    iterator_type end = source_code.end();
 
-   algc::ast::program ast;
-
-   algc::error_handler<iterator_type> error_handler(iter, end);
-   algc::parser::skipper<iterator_type> skipper;
-	algc::parser::program<iterator_type> program(error_handler);
+   algc::ast::program ast;														// Our AST
+   algc::error_handler<iterator_type> error_handler(iter, end);	// Our error handler
+	algc::parser::program<iterator_type> program(error_handler);	//	Our parser
+   algc::parser::skipper<iterator_type> skipper;						// Our skipper
+	algc::code_gen::compiler compiler(error_handler);					// Our compiler
 
 	bool success = phrase_parse(iter, end, program, skipper, ast);
 
+
 	if (success && iter == end ) {
-		std::cout << "Parsing success." << std::endl;
+		if (compiler(ast)) {
+			std::cout << "Compile Success\n\n";
+			std::cout << ast.program_name.name << "--------\n";
+			std::cout << "-------------------------\n";
+			std::cout << "Assembler----------------\n\n";
+			compiler.print_assembler();
+		}
+		else {
+			std::cout << "Compile failure\n";
+		}
 	} else {
-		std::cout << "Parsing Failure." << std::endl;
+		std::cout << "Parse Failure." << std::endl;
 	}
 
 }

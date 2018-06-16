@@ -19,7 +19,7 @@ namespace algc {
          qi::_val_type _val;
 
          qi::char_type char_;
-         qi::uint_type uint_;
+         qi::int_type int_;
          qi::real_parser<double, qi::strict_real_policies<double> > strict_double;
          qi::raw_type raw;
          qi::lexeme_type lexeme;
@@ -161,13 +161,13 @@ namespace algc {
 
          primary_expr =
               strict_double
-				| uint_
+				| int_
             | function_call
             | array_access
             | identifier
             | bool_
-            | ('\'' > char_ > '\'')
-            | no_skip['"' > *(char_ - '"') > '"']
+				| (qi::lit('\'') > char_ > qi::lit('\''))
+				| no_skip['"' > *(char_ - '"') > '"']
             | '(' > expr > ')'
             ;
 

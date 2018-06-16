@@ -4,19 +4,18 @@
 #include "ast.hpp"
 #include "error_handler.hpp"
 #include "vm.hpp"
-#include <memory>
-#include <variant>
 #include <vector>
 #include <map>
 #include <functional>
+#include <boost/variant.hpp>
+#include <boost/shared_ptr.hpp>
 #include <boost/spirit/include/phoenix_core.hpp>
 #include <boost/spirit/include/phoenix_function.hpp>
 #include <boost/spirit/include/phoenix_operator.hpp>
 
 namespace algc {
    namespace code_gen {
-
-   	using data = std::variant<
+   	using data = boost::variant<
 			  byte_code	// opcode
 			, bool		// boolean value
 			, char		// char value
@@ -26,7 +25,7 @@ namespace algc {
 			, const char*	// string value
 			>;
 
-		using value = std::variant<
+		using value = boost::variant<
 			  bool		// boolean_type
 			, char		// character_type
 			, int			// integer_type
@@ -39,13 +38,22 @@ namespace algc {
 			, std::vector<std::string>	// array_of_string_type
 			>;
 
-      struct function {
-			function(std::vector<data>& code, int nargs)
-			 : code(code), address(code.size()), size_(0), nargs_(nargs) {}
+		const data initialization_values[5] = {
+			  false
+			, '\0'
+			, 0
+			, 0.0
+			, ""
+			};
 
-			template<typename T> void op(T a);
-			template<typename T> void op(T a, T b);
-			template<typename T> void op(T a, T b, T c);
+      struct function {
+		public:
+			function(std::vector<data>& code, int nargs, bool returns_value = false)
+			 : returns_value(returns_value), code(code), address(code.size()), size_(0), nargs_(nargs) {}
+
+			void op(byte_code a);
+			template<typename T> void op(byte_code a, T b);
+			template<typename T, typename U> void op(byte_code a, T b, U c);
 
 			data& operator[](std::size_t i) { return code[address+i]; }
 			const data& operator[](std::size_t i) const { return code[address+i]; }
@@ -54,15 +62,17 @@ namespace algc {
 
 			int nargs() const { return nargs_; }
 			int nvars() const { return variables.size(); }
-			int const* find_var(std::string const& name) const;
-			void add_var(std::string const& name);
-			void link_to(std::string const& name, std::size_t address);
+			const int* find_var(const std::string& name) const;
+			void add_var(const std::string& name);
+			void link_to(const std::string& name, std::size_t address);
 
 			void print_assembler() const;
 
-			private:
+			bool returns_value;
 
-			std::map<std::string, value> variables;
+		private:
+
+			std::map<std::string, int> variables;
 			std::map<std::size_t, std::string> function_calls;
 			std::vector<data>& code;
 			std::size_t address;
@@ -82,32 +92,44 @@ namespace algc {
 					 "Error! ", _2, phx::cref(error_handler_.iters)[_1]);
 			}
 
-			bool operator()(ast::nil) { BOOST_ASSERT(0); return false; }
+			bool operator()(ast::nil) { std::cout << "oops!!" << std::endl; BOOST_ASSERT(0); return false; }
 			bool operator()(bool x);
 			bool operator()(double x);
-			bool operator()(unsigned int x);
+			bool operator()(int x);
 			bool operator()(char x);
-			bool operator()(ast::identifier& x);
-			bool operator()(ast::unary& x);
-			bool operator()(ast::array_access& x);
-			bool operator()(ast::function_call& x);
-			bool operator()(ast::expression& x);
-			bool operator()(ast::operation& x);
-			bool operator()(ast::assignment& x);
-			bool operator()(ast::read_statement& x);
-			bool operator()(ast::write_statement& x);
-			bool operator()(ast::if_statement& x);
-			bool operator()(ast::while_statement& x);
-			bool operator()(ast::repeat_until_statement& x);
-			bool operator()(ast::for_statement& x);
-			bool operator()(ast::return_statement& x);
-			bool operator()(ast::variable_declaration& x);
-			bool operator()(ast::constant_declaration& x);
-			bool operator()(ast::procedure_call_statement& x);
-			bool operator()(ast::function_definition& x);
-			bool operator()(ast::program& x);
+			bool operator()(const std::string& x);
+			bool operator()(const ast::identifier& x);
+			bool operator()(const ast::unary& x);
+			bool operator()(const ast::array_access& x);
+			bool operator()(const ast::function_call& x);
+			bool operator()(const ast::expression& x);
+			bool operator()(const ast::operation& x);
+			bool operator()(const ast::statement_list& x);
+			bool operator()(const ast::statement& x);
+			bool operator()(const ast::assignment& x);
+			bool operator()(const ast::read_statement& x);
+			bool operator()(const ast::write_statement& x);
+			bool operator()(const ast::if_statement& x);
+			bool operator()(const ast::while_statement& x);
+			bool operator()(const ast::repeat_until_statement& x);
+			bool operator()(const ast::for_statement& x);
+			bool operator()(const ast::return_statement& x);
+			bool operator()(const ast::variable_declaration_list& x);
+			bool operator()(const ast::variable_declaration& x);
+			bool operator()(const ast::constant_declaration_list& x);
+			bool operator()(const ast::constant_declaration& x);
+			bool operator()(const ast::procedure_call_statement& x);
+			bool operator()(const ast::function_definition_list& x);
+			bool operator()(const ast::function_definition& x);
+			bool operator()(const ast::program& x);
 
-			using function_table = std::map<std::string, std::shared_ptr<code_gen::function> >;
+			void print_assembler() const;
+
+			byte_code get_opcode(ast::type& t);
+			bool operator()(const boost::fusion::vector<ast::type_name, std::list<ast::identifier> >& x);
+			bool operator()(const boost::fusion::vector<ast::type_name, std::list<boost::fusion::vector<ast::identifier, unsigned int> > >& x);
+
+			using function_table = std::map<std::string, boost::shared_ptr<code_gen::function> >;
 
 			std::vector<data> code;
 			std::map<std::string, value> global_constants;
@@ -115,6 +137,7 @@ namespace algc {
 			code_gen::function* current;
 			std::string current_function_name;
 			function_table functions;
+
 			std::function<void(int tag, const std::string& what)> error_handler;
 
       };
