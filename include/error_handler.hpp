@@ -74,7 +74,9 @@ namespace algc
             // position i to the next EOL
             while (i != last && (*i != '\r' && *i != '\n'))
                 ++i;
-            return std::string(err_pos, i);
+				std::string str(err_pos, i);
+				std::replace(str.begin(), str.end(), '\t', ' ');
+				return str;
         }
 
         Iterator first;

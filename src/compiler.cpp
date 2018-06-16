@@ -69,8 +69,9 @@ namespace algc {
 			while (pc != (code.begin() + address + size_))
 			{
 				std::string line;
-                std::size_t address = pc - code.begin();
-                switch ( boost::get<byte_code>(*pc++)) {
+				std::size_t address = pc - code.begin();
+
+				switch ( boost::get<byte_code>(*pc++)) {
 				case op_neg:
 					line += "      op_neg";
 					break;
@@ -132,43 +133,43 @@ namespace algc {
 					break;
 
 				case op_load:
-					line += "      op_load     ";
+					line += "      op_load        ";
 					line += boost::lexical_cast<std::string>(locals[boost::get<int>(*pc++)]);
 					break;
 
 				case op_aload:
-					line += "      op_aload     ";
+					line += "      op_aload       ";
 					line += boost::lexical_cast<std::string>(locals[boost::get<int>(*pc++)]);
 					break;
 
 				case op_store:
-					line += "      op_store    ";
+					line += "      op_store       ";
 					line += boost::lexical_cast<std::string>(locals[boost::get<int>(*pc++)]);
 					break;
 
 				case op_astore:
-					line += "      op_astore    ";
+					line += "      op_astore      ";
 					line += boost::lexical_cast<std::string>(locals[boost::get<int>(*pc++)]);
 					break;
 
 				case op_push_char:
-					line += "      op_push_char      ";
-					line += boost::lexical_cast<std::string>(boost::get<char>(*pc++));
+					line += "      op_push_char   ";
+					line += "\'" + boost::lexical_cast<std::string>(boost::get<char>(*pc++)) + "\'";
 					break;
 
 				case op_push_int:
-					line += "      op_push_int      ";
+					line += "      op_push_int    ";
 					line += boost::lexical_cast<std::string>(boost::get<int>(*pc++));
 					break;
 
 				case op_push_float:
-					line += "      op_push_float      ";
+					line += "      op_push_float  ";
 					line += boost::lexical_cast<std::string>(boost::get<double>(*pc++));
 					break;
 
 				case op_push_str:
-					line += "      op_push_str      ";
-					line += boost::lexical_cast<std::string>(boost::get<const char*>(*pc++));
+					line += "      op_push_str    ";
+					line += "\"" + boost::lexical_cast<std::string>(boost::get<const char*>(*pc++)) + "\"";
 					break;
 
 				case op_push_true:
@@ -181,8 +182,8 @@ namespace algc {
 
 				case op_jump:
 				{
-					line += "      op_jump     ";
-                    std::size_t pos = (pc - code.begin()) + boost::get<int>(*pc++);
+					line += "      op_jump        ";
+					std::size_t pos = (pc - code.begin()) + boost::get<size_t>(*pc++);
 					if (pos == code.size())
 						 line += "end";
 					else
@@ -193,8 +194,8 @@ namespace algc {
 
 				case op_jump_if:
 					{
-						line += "      op_jump_if  ";
-						std::size_t pos = (pc - code.begin()) + boost::get<int>(*pc++);
+						line += "      op_jump_if     ";
+						std::size_t pos = (pc - code.begin()) + boost::get<size_t>(*pc++);
 						if (pos == code.size())
 							 line += "end";
 						else
@@ -204,17 +205,17 @@ namespace algc {
 					break;
 
 				case op_read:
-					line += "      op_read    ";
+					line += "      op_read        ";
 					line += boost::lexical_cast<std::string>(locals[boost::get<int>(*pc++)]);
 					break;
 
 				case op_print:
-					line += "      op_print    ";
+					line += "      op_print";
 					break;
 
 				case op_call:
 					{
-						line += "      op_call     ";
+						line += "      op_call        ";
 						int nargs = boost::get<int>(*pc++);
 						std::size_t jump = boost::get<size_t>(*pc++);
 						line += boost::lexical_cast<std::string>(nargs) + ", ";
@@ -224,7 +225,7 @@ namespace algc {
 					break;
 
 				case op_stk_adj:
-					line += "      op_stk_adj  ";
+					line += "      op_stk_adj     ";
 					line += boost::lexical_cast<std::string>(boost::get<int>(*pc++));
 					break;
 
@@ -267,6 +268,7 @@ namespace algc {
 		{
 			BOOST_ASSERT(current != 0);
 			current->op(op_push_float, x);
+			return true;
 		}
 
 		bool compiler::operator()(char x)
@@ -443,20 +445,20 @@ namespace algc {
 			BOOST_ASSERT(current != 0);
 			if (!(*this)(x.condition))
 				return false;
-			current->op(op_jump_if, 0);                 // we shall fill this (0) in later
+			current->op(op_jump_if, size_t(0));                 // we shall fill this (0) in later
 			std::size_t skip = current->size()-1;       // mark its position
 			if (!(*this)(x.then))
 				return false;
-            (*current)[skip] = int(current->size() - skip);    // now we know where to jump to (after the if branch)
+			(*current)[skip] = current->size() - skip;    // now we know where to jump to (after the if branch)
 
-			if (x.else_)                                // We got an else
+			if (x.else_)											// We got an else
 			{
-				boost::get<size_t>((*current)[skip]) += 2;                  // adjust for the "else" jump
-				current->op(op_jump, 0);                // we shall fill this (0) in later
-				std::size_t exit = current->size()-1;   // mark its position
+				boost::get<size_t>((*current)[skip]) += 2;	// adjust for the "else" jump
+				current->op(op_jump, size_t(0));						// we shall fill this (0) in later
+				std::size_t exit = current->size()-1;		// mark its position
 				if (!(*this)(*x.else_))
 					 return false;
-                (*current)[exit] = int(current->size()-exit);// now we know where to jump to (after the else branch)
+					 (*current)[exit] = current->size()-exit;// now we know where to jump to (after the else branch)
 			}
 
 			return true;
@@ -468,12 +470,12 @@ namespace algc {
 			std::size_t loop = current->size();         // mark our position
 			if (!(*this)(x.condition))
 				return false;
-			current->op(op_jump_if, 0);                 // we shall fill this (0) in later
+			current->op(op_jump_if, size_t(0));                 // we shall fill this (0) in later
 			std::size_t exit = current->size()-1;       // mark its position
 			if (!(*this)(x.body))
 				return false;
-			current->op(op_jump, int(loop-1) - int(current->size()));    // loop back
-            (*current)[exit] = int(current->size() - exit);    // now we know where to jump to (to exit the loop)
+			current->op(op_jump, (loop-1) - current->size());    // loop back
+				(*current)[exit] = current->size() - exit;    // now we know where to jump to (to exit the loop)
 			return true;
 		}
 
@@ -686,7 +688,7 @@ namespace algc {
 
             // Jump to the main function
             code.push_back(op_jump);
-            code.push_back(0); // we will fill this in later when we finish compiling
+				code.push_back(size_t(0)); // we will fill this in later when we finish compiling
                                    // and we know where the main function is
 
             if (x.funcs) {
@@ -695,7 +697,7 @@ namespace algc {
                 }
             }
 
-            code[1] = int(code.size() - 1); // jump to begin of the algorithm
+				code[1] = code.size() - 1; // jump to begin of the algorithm
 
             boost::shared_ptr<code_gen::function>& p = functions["%algorithm%"];
             p.reset(new code_gen::function(code, 0));
@@ -749,6 +751,7 @@ namespace algc {
 		bool compiler::operator()(const boost::fusion::vector<ast::type_name, std::list<boost::fusion::vector<ast::identifier, unsigned int> > >& x)
 		{
 			/// TODO arrays
+
 			return true;
 		}
 

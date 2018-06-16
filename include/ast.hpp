@@ -137,9 +137,10 @@ namespace algc {
 
       struct variable_declaration_list : std::list<variable_declaration> {};
 
+		using value = boost::variant<bool, char, int, double, std::string>;
       typedef boost::variant<
-           boost::fusion::vector<type_name, std::list<boost::fusion::vector<identifier, expression> > >
-         , boost::fusion::vector<type_name, std::list<boost::fusion::vector<identifier, std::list<expression> > > >
+			  boost::fusion::vector<type_name, std::list<boost::fusion::vector<identifier, value> > >
+			, boost::fusion::vector<type_name, std::list<boost::fusion::vector<identifier, std::list<value> > > >
       >
       constant_declaration_type;
 

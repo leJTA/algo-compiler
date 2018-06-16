@@ -92,7 +92,7 @@ namespace algc {
 					 "Error! ", _2, phx::cref(error_handler_.iters)[_1]);
 			}
 
-			bool operator()(ast::nil) { std::cout << "oops!!" << std::endl; BOOST_ASSERT(0); return false; }
+			bool operator()(ast::nil) { BOOST_ASSERT(0); return false; }
 			bool operator()(bool x);
 			bool operator()(double x);
 			bool operator()(int x);

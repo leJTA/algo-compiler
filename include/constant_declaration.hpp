@@ -33,7 +33,10 @@ namespace algc {
             qi::lexeme_type lexeme;
             qi::alpha_type alpha;
             qi::alnum_type alnum;
-            qi::uint_type uint_;
+				qi::int_type int_;
+				qi::bool_type bool_;
+				qi::char_type char_;
+				qi::real_parser<double, qi::strict_real_policies<double> > strict_double;
             qi::blank_type blank;
 
             using qi::on_error;
@@ -78,13 +81,31 @@ namespace algc {
                (
                   (
                        primitive_type
-                     > ((identifier > '=' >> expr) % ',')
+							> ((identifier > '=' > (
+									 strict_double
+									 | int_
+									 | bool_
+									 | qi::lit('\'') > char_ > qi::lit('\'')
+									 | no_skip['"' > *(char_ - '"') > '"']
+									 )
+								) % ',')
                   )
                   |
-                  (
-                       array_type
-                     > ((identifier > lit('=') >> '[' >> (expr % ',') >> ']') % ',')
-                  )
+						(
+							array_type
+							> ((identifier > lit('=')
+								 > '['
+								 >> (
+									(
+									  strict_double
+									  | int_
+									  | bool_
+									  | qi::lit('\'') > char_ > qi::lit('\'')
+									  | no_skip['"' > *(char_ - '"') > '"']
+									) % ',')
+								>> ']') % ','
+							)
+						)
                )
                > no_skip[*blank >> eol]
                ;
