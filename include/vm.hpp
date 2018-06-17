@@ -32,6 +32,9 @@ namespace algc {
       op_load,        //  load a variable
       op_store,       //  store a variable
 
+		op_new_array,	 //  allocates memory space for a new array whose size is the top stack entry
+		op_array_length,//  get the size of the array
+
       op_aload,       //  load an array
       op_astore,      //  store an array
 
@@ -39,8 +42,8 @@ namespace algc {
       op_push_int,    //  push constant integer into the stack
       op_push_float,  //  push constant float into the stack
       op_push_str,	 //  push constant string into the stack
-      op_push_true,  //  push constant 1 into the stack
-      op_push_false,   //  push constant 0 into the stack
+		op_push_true,   //  push true into the stack
+		op_push_false,  //  push false into the stack
 
       op_jump_if,     //  jump to a relative position in the code if top stack evaluates to false
       op_jump,        //  jump to a relative position in the code

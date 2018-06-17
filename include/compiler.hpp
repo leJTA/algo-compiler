@@ -101,6 +101,7 @@ namespace algc {
 			bool operator()(const ast::identifier& x);
 			bool operator()(const ast::unary& x);
 			bool operator()(const ast::array_access& x);
+			bool operator()(const ast::array_size_access& x);
 			bool operator()(const ast::function_call& x);
 			bool operator()(const ast::expression& x);
 			bool operator()(const ast::operation& x);

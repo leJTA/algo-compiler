@@ -42,6 +42,7 @@ namespace algc {
       struct nil {};
       struct unary;
       struct array_access;
+		struct array_size_access;
       struct function_call;
       struct expression;
 
@@ -63,6 +64,7 @@ namespace algc {
           , std::string
           , boost::recursive_wrapper<unary>
           , boost::recursive_wrapper<array_access>
+			 , boost::recursive_wrapper<array_size_access>
           , boost::recursive_wrapper<function_call>
           , boost::recursive_wrapper<expression>
         >
@@ -104,6 +106,10 @@ namespace algc {
          identifier array_name;
          operand index;
       };
+
+		struct array_size_access {
+			identifier array_name;
+		};
 
       struct function_call
       {
@@ -274,6 +280,11 @@ BOOST_FUSION_ADAPT_STRUCT(
    algc::ast::array_access,
    (algc::ast::identifier, array_name)
    (algc::ast::operand, index)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+	algc::ast::array_size_access,
+	(algc::ast::identifier, array_name)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(

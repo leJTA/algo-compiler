@@ -132,6 +132,11 @@ namespace algc {
 					line += "      op_or";
 					break;
 
+				case op_array_length:
+					line += "      op_arraylength ";
+					line += boost::lexical_cast<std::string>(locals[boost::get<int>(*pc++)]);
+					break;
+
 				case op_load:
 					line += "      op_load        ";
 					line += boost::lexical_cast<std::string>(locals[boost::get<int>(*pc++)]);
@@ -317,14 +322,25 @@ namespace algc {
 		{
 			BOOST_ASSERT(current != 0);
 			const int* p = current->find_var(x.array_name.name);
-			if (p == nullptr)
-			{
+			if (p == nullptr) {
 				error_handler(x.array_name.id, "Undeclared variable: " + x.array_name.name);
 				return false;
 			}
 			if (!boost::apply_visitor((*this), x.index))
 				return false;
 			current->op(op_aload, *p);
+			return true;
+		}
+
+		bool compiler::operator()(const ast::array_size_access& x)
+		{
+			BOOST_ASSERT(current != 0);
+			const int* p = current->find_var(x.array_name.name);
+			if (p == nullptr) {
+				error_handler(x.array_name.id, "Undeclared variable: " + x.array_name.name);
+				return false;
+			}
+			current->op(op_array_length, *p);
 			return true;
 		}
 
@@ -445,7 +461,7 @@ namespace algc {
 			BOOST_ASSERT(current != 0);
 			if (!(*this)(x.condition))
 				return false;
-			current->op(op_jump_if, size_t(0));                 // we shall fill this (0) in later
+			current->op(op_jump_if, size_t(0));         // we shall fill this (0) in later
 			std::size_t skip = current->size()-1;       // mark its position
 			if (!(*this)(x.then))
 				return false;
@@ -470,24 +486,76 @@ namespace algc {
 			std::size_t loop = current->size();         // mark our position
 			if (!(*this)(x.condition))
 				return false;
-			current->op(op_jump_if, size_t(0));                 // we shall fill this (0) in later
+			current->op(op_jump_if, size_t(0));         // we shall fill this (0) in later
 			std::size_t exit = current->size()-1;       // mark its position
 			if (!(*this)(x.body))
 				return false;
 			current->op(op_jump, (loop-1) - current->size());    // loop back
-				(*current)[exit] = current->size() - exit;    // now we know where to jump to (to exit the loop)
+			(*current)[exit] = current->size() - exit;    // now we know where to jump to (to exit the loop)
 			return true;
 		}
 
 		bool compiler::operator()(const ast::repeat_until_statement& x)
 		{
-			/// TODO add code
+			BOOST_ASSERT(current != 0);
+			std::size_t start = current->size() - 1;	  // mark our position
+			if (!(*this)(x.body))
+				return false;
+			if (!(*this)(x.condition))
+				return false;
+			current->op(op_jump_if, start - current->size());	// conditional loop back
 			return true;
 		}
 
 		bool compiler::operator()(const ast::for_statement& x)
 		{
-			/// TODO add code
+			BOOST_ASSERT(current != 0);
+
+			/// We Find the counter in the variable list
+			const int* p = current->find_var(x.counter.name);
+			if (p == nullptr) {
+				if (global_constants.find(x.counter.name) != global_constants.end()) {
+					error_handler(x.counter.id, x.counter.name + " is a constant and cannot be modified");
+				}
+				else {
+					error_handler(x.counter.id, "Undeclared variable: " + x.counter.name);
+				}
+				return false;
+			}
+
+			/// Initialisation
+			if (!(*this)(x.start))
+				return false;
+			current->op(op_store, *p);				// counter := start
+
+			size_t loop = current->size();
+
+			/// Condition (counter <= end)
+			current->op(op_load, *p);				// mark our position
+			if (!(*this)(x.end))
+				return false;
+			current->op(op_lte);						// if counter <= end
+			current->op(op_jump_if, size_t(0));	// we shall fill this (0) in later
+
+			std::size_t exit = current->size()-1;       // mark its position
+
+			/// Body
+			if (!(*this)(x.body))
+				return false;
+
+			/// Incrementation
+			current->op(op_load, *p);
+			if (x.step) {								// if we have a step
+				if (!(*this)(*x.step))
+					return false;
+			}
+			else {
+				current->op(op_push_int, 1);
+			}
+			current->op(op_add);						// counter + 1 | counter + step
+			current->op(op_store, *p);
+			current->op(op_jump, (loop-1) - current->size());    // loop back
+			(*current)[exit] = current->size() - exit;    // now we know where to jump to (to exit the loop)
 			return true;
 		}
 
@@ -750,8 +818,8 @@ namespace algc {
 
 		bool compiler::operator()(const boost::fusion::vector<ast::type_name, std::list<boost::fusion::vector<ast::identifier, unsigned int> > >& x)
 		{
-			/// TODO arrays
 
+			/// TODO arrays
 			return true;
 		}
 

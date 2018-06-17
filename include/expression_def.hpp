@@ -95,6 +95,7 @@ namespace algc {
             ("array_of_boolean")
             ("array_of_character")
             ("array_of_string")
+				("size")
             ("true")
             ("false")
             ("or")
@@ -164,6 +165,7 @@ namespace algc {
 				| int_
             | function_call
             | array_access
+				| array_size_access
             | identifier
             | bool_
 				| (qi::lit('\'') > char_ > qi::lit('\''))
@@ -176,6 +178,11 @@ namespace algc {
             > expr
             > ']'
             ;
+
+			array_size_access =
+				  qi::lit("size")
+				> '(' >> identifier >> ')'
+				;
 
          function_call =
               (identifier >> '(')

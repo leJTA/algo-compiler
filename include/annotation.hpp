@@ -35,6 +35,11 @@ namespace algc {
             x.array_name.id = id;
 			}
 
+			void operator()(ast::array_size_access& x) const
+			{
+				x.array_name.id = id;
+			}
+
          template <typename T>
          void operator()(T& x) const
          {
