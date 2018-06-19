@@ -43,6 +43,7 @@ int main(int argc, char* argv[])
    iterator_type iter = source_code.begin();
    iterator_type end = source_code.end();
 
+	algc::vmachine vm;
    algc::ast::program ast;														// Our AST
    algc::error_handler<iterator_type> error_handler(iter, end);	// Our error handler
 	algc::parser::program<iterator_type> program(error_handler);	//	Our parser
@@ -59,6 +60,20 @@ int main(int argc, char* argv[])
 			std::cout << "-------------------------\n";
 			std::cout << "Assembler----------------\n\n";
 			compiler.print_assembler();
+
+			std::cout << "\n\n-------------------------\n";
+			std::cout << "Execution\n";
+			std::cout << "-------------------------\n\n";
+
+			try {
+				algc::data r = vm.execute(compiler.get_code());
+			}
+			catch (std::exception& e) {
+				std::cout << e.what() << std::endl;
+			}
+			std::cout << "\n\n-------------------------\n";
+			std::cout << "Terminated\n";
+			std::cout << "-------------------------\n\n";
 		}
 		else {
 			std::cout << "Compile failure\n";

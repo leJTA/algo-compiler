@@ -55,128 +55,92 @@ namespace algc {
       op_call,        //  function call
       op_return       //  return from function
    };
-/*
-   using data = boost::variant<
-             byte_code	// opcode
-           , bool		// boolean value
-           , char		// char value
-           , int			// integer value
-           , size_t		// offset
-           , double		// float value
-           , const char*	// string value
-           >;
 
-   class vmachine
-   {
-   public:
+	using data = boost::variant<
+		  byte_code
+		, bool		// boolean value
+		, char		// char value
+		, int			// integer value
+		, size_t		// offset
+		, double		// float value
+		, const char*	// string value
+		>;
 
-       vmachine(unsigned stackSize = 4096)
-        : stack(stackSize)
-       {
-       }
+	extern const char* type_str[];
 
-       int execute(std::vector<data> const& code)
-       {
-           return execute(code, code.begin(), stack.begin());
-       }
+	class vmachine {
+	public:
 
-       std::vector<data> const& get_stack() const { return stack; }
-       std::vector<data>& get_stack() { return stack; }
+	  vmachine(unsigned stackSize = 4096) : stack(stackSize)
+	  {
+	  }
 
-   private:
+	  data execute(std::vector<data> const& code)
+	  {
+			return execute(code, code.begin(), stack.begin());
+	  }
 
-       int execute(
-           std::vector<data> const& code            // the program code
-         , std::vector<data>::const_iterator pc     // program counter
-         , std::vector<data>::iterator frame_ptr    // start of arguments and locals
-       );
+	  std::vector<data> const& get_stack() const { return stack; }
+	  std::vector<data>& get_stack() { return stack; }
 
-       std::vector<data> stack;
+	private:
 
-   };
+	  data execute(
+			std::vector<data> const& code            // the program code
+		 , std::vector<data>::const_iterator pc     // program counter
+		 , std::vector<data>::iterator frame_ptr    // start of arguments and locals
+	  );
 
-   struct op_visitor {
-       op_visitor(byte_code op) : opcode(op){}
+	  template<typename Func>
+	  bool binary_operation(data& x, data& y, Func f)
+	  {
+		  if (x.which() == 3 && y.which() == 3) {
+			  x = f(boost::get<int>(x), boost::get<int>(y));
+			  return true;
+		  }
+		  else if (x.which() == 3 && y.which() == 5) {
+			  x = f(boost::get<int>(x), boost::get<double>(y));
+			  return true;
+		  }
+		  else if (x.which() == 5 && y.which() == 3) {
+			  x = f(boost::get<double>(x), boost::get<int>(y));
+			  return true;
+		  }
+		  else if (x.which() == 5 && y.which() == 5) {
+			  x = f(boost::get<double>(y), boost::get<double>(y));
+			  return true;
+		  }
+		  else {
+			  return false;
+		  }
+	  }
 
-       void operator ()(int& x)
-       {
-           switch (opcode) {
-           case op_neg:
-               x = -x;
-               break;
-           case op_print:
-               std::cout << x;
-               break;
-           case op_read:
-               std::cin >> x;
-               break;
-           }
+	  void neg(data&);
+	  void add(data&, data&);
+	  void sub(data&, data&);
+	  void mul(data&, data&);
+	  void div(data&, data&);
+	  void mod(data&, data&);
 
-       }
+	  void not_(data&);
+	  void eq(data&, data&);
+	  void neq(data&, data&);
+	  void lt(data&, data&);
+	  void lte(data&, data&);
+	  void gt(data&, data&);
+	  void gte(data&, data&);
 
-       void operator ()(int& x)
-       {
-           switch(opcode) {
-           case op_not:
-               x = !x;
-               break;
-           }
-       }
+	  void and_(data&, data&);
+	  void or_(data&, data&);
 
-       template<typename T, typename U>
-       void operator ()(T& x, U& y)
-       {
-           switch (opcode) {
-           case op_add:
-               x += y;
-               break;
-           case op_sub:
-               x -= y;
-               break;
-           case op_mul:
-               x *= y;
-               break;
-           case op_div:
-               x /= y;
-               break;
-           case op_mod:
-               x %= y;
-               break;
-           case op_eq:
-               x = bool(x == y);
-               break;
-           case op_neq:
-               x = bool(x != y);
-               break;
-           case op_lt:
-               x = bool(x < y);
-               break;
-           case op_lte:
-               x = bool(x <= y);
-               break;
-           case op_gt:
-               x = bool(x > y);
-               break;
-           case op_gte:
-               x = bool(x >= y);
-               break;
-           case op_and:
-               x = bool(x) && bool(y);
-               break;
-           case op_or:
-               x = bool(x) || bool(y);
-               break;
-           case op_store:
-               x = y;
-               break;
-           case op_load:
-               y = x;
-               break;
-           }
-       }
+	  void read(data&);
+	  void print(data&);
 
-       byte_code opcode;
-   };
-*/
+	  void assign(data&, data&);
+
+	  std::vector<data> stack;
+	};
+
+
 }
 #endif // __VM_HPP__

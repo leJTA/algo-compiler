@@ -126,6 +126,9 @@ namespace algc {
 
 			void print_assembler() const;
 
+			std::vector<data>& get_code() { return code; }
+			std::vector<data> const& get_code() const { return code; }
+
 			byte_code get_opcode(ast::type& t);
 			bool operator()(const boost::fusion::vector<ast::type_name, std::list<ast::identifier> >& x);
 			bool operator()(const boost::fusion::vector<ast::type_name, std::list<boost::fusion::vector<ast::identifier, unsigned int> > >& x);

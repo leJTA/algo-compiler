@@ -777,8 +777,12 @@ namespace algc {
                     return false;
                 }
             }
-
-            return ((*this)(x.body));
+				if (!(*this)(x.body)) {
+					return false;
+				}
+				current->op(op_push_true);	// at the end of the algorithm, we return true
+				current->op(op_return);
+				return true;
         }
 
         void compiler::print_assembler() const
