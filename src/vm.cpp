@@ -98,6 +98,11 @@ namespace algc
 				assign(frame_ptr[boost::get<int>(*pc++)], stack_ptr[0]);
 				break;
 
+			case op_array_length:
+				//*stack_ptr++ = frame_ptr[*pc++];
+				*stack_ptr++ = array_length(frame_ptr[boost::get<int>(*pc++)]);
+				break;
+
 			case op_aload:
 				break;
 
@@ -146,7 +151,8 @@ namespace algc
 				break;
 
 			case op_read:
-				 break;
+				read(frame_ptr[boost::get<int>(*pc++)]);
+				break;
 
 			case op_stk_adj:
 				 stack_ptr += boost::get<int>(*pc++);
@@ -367,7 +373,45 @@ namespace algc
 
 	void vmachine::read(data& x)
 	{
-
+		switch (x.which()) {
+		case 1:	// boolean
+			{
+				bool input;
+				std::cin >> input;
+				x = input;
+				break;
+			}
+		case 2:	// char
+			{
+				char input;
+				std::cin >> input;
+				x = input;
+				break;
+			}
+		case 3:	// integer
+			{
+				int input;
+				std::cin >> input;
+				x = input;
+				break;
+			}
+		case 5: // double
+			{
+				double input;
+				std::cin >> input;
+				x = input;
+				break;
+			}
+		case 6: // string
+			{
+				string input;
+				std::cin >> input;
+				x = strdup(input.c_str());
+				break;
+			}
+		default:
+			throw std::runtime_error("Input error");
+		}
 	}
 
 	void vmachine::print(const data& x)
@@ -377,6 +421,16 @@ namespace algc
 		}
 		else {
 			boost::apply_visitor([](auto& arg){std::cout << arg;}, x);
+		}
+	}
+
+	int vmachine::array_length(data &x)
+	{
+		if (x.which() == 6) {
+			return strlen(boost::get<const char*>(x));
+		}
+		else {
+			throw std::runtime_error(string("cannot get size of varialble of type ") + type_str[x.which()]);
 		}
 	}
 

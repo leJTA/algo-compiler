@@ -172,6 +172,8 @@ namespace algc {
 
 		void read(data&);
 
+		int array_length(data&);
+
 		void print(const data &);
 
 		void assign(data&, data&);

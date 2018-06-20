@@ -772,14 +772,22 @@ namespace algc {
             current = p.get();
             current_function_name = "%algorithm%";
 
+				// op_stk_adj 0 for now. we'll know how many variables
+				// we'll have later and add them
+				current->op(op_stk_adj, 0);
+
             if (x.vars) {
                 if (!(*this)(*x.vars)) {
                     return false;
                 }
             }
+
 				if (!(*this)(x.body)) {
 					return false;
 				}
+				(*current)[1] = current->nvars();   // now store the actual number of variables
+																		  // this includes the arguments
+
 				current->op(op_push_true);	// at the end of the algorithm, we return true
 				current->op(op_return);
 				return true;
@@ -809,12 +817,12 @@ namespace algc {
 				}
 
 				current->add_var(v.name);
-                if (opcode == op_push_false) {
-                    current->op(opcode);
-                }
-                else {
-                    current->op(opcode, initialization_values[t]);
-                }
+				if (opcode == op_push_false) {
+					current->op(op_push_false);
+				}
+				else {
+					current->op(opcode, initialization_values[t]);
+				}
 				current->op(op_store, *current->find_var(v.name));
 			}
 			return true;
