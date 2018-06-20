@@ -3,10 +3,11 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 #include <boost/variant.hpp>
 
 namespace algc {
-
+	using std::string;
    ///////////////////////////////////////////////////////////////////////////
    //  The Virtual Machine
    ///////////////////////////////////////////////////////////////////////////
@@ -92,22 +93,22 @@ namespace algc {
 	  );
 
 	  template<typename Func>
-	  bool binary_operation(data& x, data& y, Func f)
+	  bool binary_operation(data& x, data& y, Func f) // x = f(x,y)
 	  {
-		  if (x.which() == 3 && y.which() == 3) {
+		  if (x.which() == 3 && y.which() == 3) {	// int, int
 			  x = f(boost::get<int>(x), boost::get<int>(y));
 			  return true;
 		  }
-		  else if (x.which() == 3 && y.which() == 5) {
+		  else if (x.which() == 3 && y.which() == 5) {	// int, double
 			  x = f(boost::get<int>(x), boost::get<double>(y));
 			  return true;
 		  }
-		  else if (x.which() == 5 && y.which() == 3) {
+		  else if (x.which() == 5 && y.which() == 3) {	// double, int
 			  x = f(boost::get<double>(x), boost::get<int>(y));
 			  return true;
 		  }
-		  else if (x.which() == 5 && y.which() == 5) {
-			  x = f(boost::get<double>(y), boost::get<double>(y));
+		  else if (x.which() == 5 && y.which() == 5) {	// double, double
+			  x = f(boost::get<double>(x), boost::get<double>(y));
 			  return true;
 		  }
 		  else {
@@ -115,32 +116,67 @@ namespace algc {
 		  }
 	  }
 
-	  void neg(data&);
-	  void add(data&, data&);
-	  void sub(data&, data&);
-	  void mul(data&, data&);
-	  void div(data&, data&);
-	  void mod(data&, data&);
+		template<typename Func>
+		bool compare(data& x, data& y, Func f)	// f returns a boolean value
+		{
+			if (x.which() == 3 && y.which() == 3) {	// int, int
+				x = f(boost::get<int>(x), boost::get<int>(y));
+				return true;
+			}
+			else if (x.which() == 3 && y.which() == 5) {	// int, double
+				x = f(boost::get<int>(x), boost::get<double>(y));
+				return true;
+			}
+			else if (x.which() == 5 && y.which() == 3) {	// double, int
+				x = f(boost::get<double>(x), boost::get<int>(y));
+				return true;
+			}
+			else if (x.which() == 5 && y.which() == 5) {	// double, double
+				x = f(boost::get<double>(x), boost::get<double>(y));
+				return true;
+			}
+			else if (x.which() == 2 && y.which() == 2){	// char, char
+				x = f(boost::get<char>(x), boost::get<char>(y));
+				return true;
+			}
+			else if (x.which() == 6 && y.which() == 6) {	// string, string
+				x = f(string(boost::get<const char*>(x)), string(boost::get<const char*>(y)));
+				return true;
+			}
+			else if (x.which() == 1 && y.which() == 1) { // bool, bool
+				x = f(boost::get<bool>(x), boost::get<bool>(y));
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
 
-	  void not_(data&);
-	  void eq(data&, data&);
-	  void neq(data&, data&);
-	  void lt(data&, data&);
-	  void lte(data&, data&);
-	  void gt(data&, data&);
-	  void gte(data&, data&);
+		void neg(data&);
+		void add(data&, data&);
+		void sub(data&, data&);
+		void mul(data&, data&);
+		void div(data&, data&);
+		void mod(data&, data&);
 
-	  void and_(data&, data&);
-	  void or_(data&, data&);
+		void not_(data&);
+		void eq(data&, data&);
+		void neq(data&, data&);
+		void lt(data&, data&);
+		void lte(data&, data&);
+		void gt(data&, data&);
+		void gte(data&, data&);
 
-	  void read(data&);
-	  void print(data&);
+		void and_(data&, data&);
+		void or_(data&, data&);
 
-	  void assign(data&, data&);
+		void read(data&);
 
-	  std::vector<data> stack;
+		void print(const data &);
+
+		void assign(data&, data&);
+
+		std::vector<data> stack;
 	};
-
-
 }
 #endif // __VM_HPP__

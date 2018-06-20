@@ -1,12 +1,9 @@
 #include "vm.hpp"
 #include <boost/variant.hpp>
-#include <string>
 #include <exception>
 
 namespace algc
 {
-	using std::string;
-
 	data vmachine::execute(
 	  std::vector<data> const& code
 	, std::vector<data>::const_iterator pc
@@ -54,52 +51,52 @@ namespace algc
 
 			case op_eq:
 				--stack_ptr;
-				//
+				eq(stack_ptr[-1], stack_ptr[0]);
 				break;
 
 			case op_neq:
 				--stack_ptr;
-				//boost::apply_visitor(op_visitor(op_neq), stack_ptr[-1], stack_ptr[0]);
+				neq(stack_ptr[-1], stack_ptr[0]);
 				break;
 
 			case op_lt:
 				--stack_ptr;
-				//boost::apply_visitor(op_visitor(op_lt), stack_ptr[-1], stack_ptr[0]);
+				lt(stack_ptr[-1], stack_ptr[0]);
 				break;
 
 			case op_lte:
-				 --stack_ptr;
-				 //boost::apply_visitor(op_visitor(op_lte), stack_ptr[-1], stack_ptr[0]);
-				 break;
+				--stack_ptr;
+				lte(stack_ptr[-1], stack_ptr[0]);
+				break;
 
 			case op_gt:
-				 --stack_ptr;
-				 //boost::apply_visitor(op_visitor(op_gt), stack_ptr[-1], stack_ptr[0]);
-				 break;
+				--stack_ptr;
+				gt(stack_ptr[-1], stack_ptr[0]);
+				break;
 
 			case op_gte:
-				 --stack_ptr;
-				 //boost::apply_visitor(op_visitor(op_gte), stack_ptr[-1], stack_ptr[0]);
-				 break;
+				--stack_ptr;
+				gte(stack_ptr[-1], stack_ptr[0]);
+				break;
 
 			case op_and:
-				 --stack_ptr;
-				 //boost::apply_visitor(op_visitor(op_and), stack_ptr[-1], stack_ptr[0]);
-				 break;
+				--stack_ptr;
+				and_(stack_ptr[-1], stack_ptr[0]);
+				break;
 
 			case op_or:
-				 --stack_ptr;
-				 //boost::apply_visitor(op_visitor(op_or), stack_ptr[-1], stack_ptr[0]);
-				 break;
+				--stack_ptr;
+				or_(stack_ptr[-1], stack_ptr[0]);
+				break;
 
 			case op_load:
-				 //boost::apply_visitor(op_visitor(op_load), frame_ptr[boost::get<int>(*pc++)], *stack_ptr++);
-				 break;
+				*stack_ptr++ = frame_ptr[boost::get<int>(*pc++)];
+				break;
 
 			case op_store:
-				 --stack_ptr;
-				 //boost::apply_visitor(op_visitor(op_store), frame_ptr[boost::get<int>(*pc++)], stack_ptr[0]);
-				 break;
+				--stack_ptr;
+				assign(frame_ptr[boost::get<int>(*pc++)], stack_ptr[0]);
+				break;
 
 			case op_aload:
 				break;
@@ -158,7 +155,7 @@ namespace algc
 			case op_call:
 				 {
 					  int nargs = boost::get<int>(*pc++);
-					  int jump = boost::get<int>(*pc++);
+					  int jump = boost::get<size_t>(*pc++);
 
 					  // a function call is a recursive call to execute
 					  data r = execute(
@@ -271,8 +268,8 @@ namespace algc
 			 || (y.which() == 5 && boost::get<double>(y) == 0.0)) {	// check for division by zero
 			throw std::runtime_error("Error division by zero");
 		}
-		if (binary_operation(x, y, [](auto x, auto y){return x / y;})) { // division for int and double
-			return;
+		if (x.which() == 3 && y.which() == 3) { // modulo for int
+			boost::get<int>(x) %= boost::get<int>(y);
 		}
 		else {
 			throw std::runtime_error(string("operation '/' cannot be applied between types : ")
@@ -282,42 +279,90 @@ namespace algc
 
 	void vmachine::eq(data& x, data& y)
 	{
-
+		if (compare(x, y, [](auto x, auto y){return x == y;})) {
+			return;
+		}
+		else {
+			throw std::runtime_error(string("comparison '=' cannot be applied between types : ")
+											 + type_str[x.which()] + " and " + type_str[y.which()]);
+		}
 	}
 
 	void vmachine::neq(data& x, data& y)
 	{
-
+		if (compare(x, y, [](auto x, auto y){return x != y;})) {
+			return;
+		}
+		else {
+			throw std::runtime_error(string("comparison '!=' cannot be applied between types : ")
+											 + type_str[x.which()] + " and " + type_str[y.which()]);
+		}
 	}
 
 	void vmachine::lt(data& x, data& y)
 	{
-
+		if (compare(x, y, [](auto x, auto y){return x < y;})) {
+			return;
+		}
+		else {
+			throw std::runtime_error(string("comparison '<' cannot be applied between types : ")
+											 + type_str[x.which()] + " and " + type_str[y.which()]);
+		}
 	}
 
 	void vmachine::lte(data& x, data& y)
 	{
-
+		if (compare(x, y, [](auto x, auto y){return x <= y;})) {
+			return;
+		}
+		else {
+			throw std::runtime_error(string("comparison '<=' cannot be applied between types : ")
+											 + type_str[x.which()] + " and " + type_str[y.which()]);
+		}
 	}
 
 	void vmachine::gt(data& x, data& y)
 	{
-
+		if (compare(x, y, [](auto x, auto y){return x > y;})) {
+			return;
+		}
+		else {
+			throw std::runtime_error(string("comparison '>' cannot be applied between types : ")
+											 + type_str[x.which()] + " and " + type_str[y.which()]);
+		}
 	}
 
 	void vmachine::gte(data& x, data& y)
 	{
-
+		if (compare(x, y, [](auto x, auto y){return x >= y;})) {
+			return;
+		}
+		else {
+			throw std::runtime_error(string("comparison '>=' cannot be applied between types : ")
+											 + type_str[x.which()] + " and " + type_str[y.which()]);
+		}
 	}
 
 	void vmachine::and_(data& x, data& y)
 	{
-
+		if (x.which() == 1 && y.which() == 1) {
+			x = boost::get<bool>(x) && boost::get<bool>(y);
+		}
+		else {
+			throw std::runtime_error(string("operation 'logical and' cannot be applied between types : ")
+											 + type_str[x.which()] + " and " + type_str[y.which()]);
+		}
 	}
 
 	void vmachine::or_(data& x, data& y)
 	{
-
+		if (x.which() == 1 && y.which() == 1) {
+			x = boost::get<bool>(x) || boost::get<bool>(y);
+		}
+		else {
+			throw std::runtime_error(string("operation 'logical or' cannot be applied between types : ")
+											 + type_str[x.which()] + " and " + type_str[y.which()]);
+		}
 	}
 
 	void vmachine::read(data& x)
@@ -325,9 +370,14 @@ namespace algc
 
 	}
 
-	void vmachine::print(data& x)
+	void vmachine::print(const data& x)
 	{
-		boost::apply_visitor([](auto& arg){std::cout << arg;}, x);
+		if (x.which() == 1) {
+			std::cout << ((boost::get<bool>(x) == true) ? "True" : "False");
+		}
+		else {
+			boost::apply_visitor([](auto& arg){std::cout << arg;}, x);
+		}
 	}
 
 	void vmachine::assign(data& x, data& y)

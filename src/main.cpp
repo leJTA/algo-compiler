@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
 				algc::data r = vm.execute(compiler.get_code());
 			}
 			catch (std::exception& e) {
-				std::cout << e.what() << std::endl;
+				std::cout << "Error : " << e.what() << std::endl;
 			}
 			std::cout << "\n\n-------------------------\n";
 			std::cout << "Terminated\n";
