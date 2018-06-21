@@ -49,14 +49,16 @@ functions_and_procedures
 		result := 1
 		while i < n do
 			result := x * result
+			i := i + 1
 		endwhile
 		return result
 
 	end	/* end function */
 
 begin
-	write("Please enter a number and an integer")
+	write("Enter the real number :")
 	read(x)
+	write("Enter the power : ")
 	read(n)
 	write(x, "^", n, " = ", power(x, n))
 
