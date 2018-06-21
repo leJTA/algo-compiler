@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <memory>
 #include <boost/variant.hpp>
 
 namespace algc {
@@ -33,8 +34,13 @@ namespace algc {
       op_load,        //  load a variable
       op_store,       //  store a variable
 
-		op_new_array,	 //  allocates memory space for a new array whose size is the top stack entry
-		op_array_length,//  get the size of the array
+		op_new_bool_array,	//  allocates memory space for a new array of booleans
+		op_new_int_array,		//  allocates memory space for a new array of integers
+		op_new_char_array,	//  allocates memory space for a new array of characters
+		op_new_float_array,	//  allocates memory space for a new array of floats
+		op_new_string_array,	//  allocates memory space for a new array of strings
+
+		op_array_length,		//  get the size of the array
 
       op_aload,       //  load an array
       op_astore,      //  store an array
@@ -57,6 +63,14 @@ namespace algc {
       op_return       //  return from function
    };
 
+	using array = boost::variant<
+		  std::vector<bool>
+		, std::vector<char>
+		, std::vector<int>
+		, std::vector<double>
+		, std::vector<const char*>
+		>;
+
 	using data = boost::variant<
 		  byte_code
 		, bool		// boolean value
@@ -65,6 +79,7 @@ namespace algc {
 		, size_t		// offset
 		, double		// float value
 		, const char*	// string value
+		, std::shared_ptr<array>	// array value
 		>;
 
 	extern const char* type_str[];
@@ -172,7 +187,14 @@ namespace algc {
 
 		void read(data&);
 
-		int array_length(data&);
+		void new_bool_array(data&, int);
+		void new_char_array(data& x, int sz);
+		void new_int_array(data& x, int sz);
+		void new_float_array(data& x, int sz);
+		void new_string_array(data& x, int sz);
+		void aload(data&, data&);
+		void astore(data&, data&, data&);
+		void array_length(data&, data &y);
 
 		void print(const data &);
 

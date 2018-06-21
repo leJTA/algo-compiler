@@ -6,7 +6,6 @@
 
 namespace algc {
 	namespace code_gen {
-
 		void function::op(byte_code a)
 		{
 			code.push_back(a);
@@ -130,6 +129,31 @@ namespace algc {
 
 				case op_or:
 					line += "      op_or";
+					break;
+
+				case op_new_bool_array:
+					line += "    op_new_boolarray ";
+					line += boost::lexical_cast<std::string>(locals[boost::get<int>(*pc++)]);
+					break;
+
+				case op_new_char_array:
+					line += "    op_new_chararray ";
+					line += boost::lexical_cast<std::string>(locals[boost::get<int>(*pc++)]);
+					break;
+
+				case op_new_int_array:
+					line += "    op_new_intarray  ";
+					line += boost::lexical_cast<std::string>(locals[boost::get<int>(*pc++)]);
+					break;
+
+				case op_new_float_array:
+					line += "   op_new_floatarray ";
+					line += boost::lexical_cast<std::string>(locals[boost::get<int>(*pc++)]);
+					break;
+
+				case op_new_string_array:
+					line += "  op_new_stringarray ";
+					line += boost::lexical_cast<std::string>(locals[boost::get<int>(*pc++)]);
 					break;
 
 				case op_array_length:
@@ -745,6 +769,10 @@ namespace algc {
 				return false;
 			(*current)[1] = current->nvars();   // now store the actual number of variables
 														  // this includes the arguments
+			if (!current->returns_value) {
+				current->op(op_push_int, 0);
+				current->op(op_return);
+			}
 			return true;
 		}
 
@@ -788,7 +816,7 @@ namespace algc {
 				(*current)[1] = current->nvars();   // now store the actual number of variables
 																		  // this includes the arguments
 
-				current->op(op_push_true);	// at the end of the algorithm, we return true
+				current->op(op_push_int, 0);	// at the end of the algorithm, we return true
 				current->op(op_return);
 				return true;
         }
@@ -830,8 +858,23 @@ namespace algc {
 
 		bool compiler::operator()(const boost::fusion::vector<ast::type_name, std::list<boost::fusion::vector<ast::identifier, unsigned int> > >& x)
 		{
+			ast::type t = boost::fusion::at_c<0>(boost::fusion::at_c<1>(x).front()).t;
+			byte_code opcode = get_opcode(t);
+			for (const auto& id_sz : boost::fusion::at_c<1>(x)) {	// identifier_size_pair
 
-			/// TODO arrays
+				const ast::identifier& v(boost::fusion::at_c<0>(id_sz));
+				const unsigned int sz(boost::fusion::at_c<1>(id_sz));
+
+				const int* p = current->find_var(v.name);	// array name
+				if (p != nullptr)
+				{
+					error_handler(v.id, "Duplicate variable: " + v.name);
+					return false;
+				}
+				current->add_var(v.name);
+				current->op(op_push_int, int(sz));
+				current->op(opcode, *current->find_var(v.name));
+			}
 			return true;
 		}
 
@@ -852,6 +895,21 @@ namespace algc {
 				break;
 			case ast::string_type:
 				return op_push_str;
+				break;
+			case ast::array_of_boolean_type:
+				return op_new_bool_array;
+				break;
+			case ast::array_of_character_type:
+				return op_new_char_array;
+				break;
+			case ast::array_of_integer_type:
+				return op_new_int_array;
+				break;
+			case ast::array_of_real_type:
+				return op_new_float_array;
+				break;
+			case ast::array_of_string_type:
+				return op_new_string_array;
 				break;
 			}
 		}

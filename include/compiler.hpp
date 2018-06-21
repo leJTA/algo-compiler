@@ -15,16 +15,6 @@
 
 namespace algc {
    namespace code_gen {
-   	using data = boost::variant<
-			  byte_code	// opcode
-			, bool		// boolean value
-			, char		// char value
-			, int			// integer value
-			, size_t		// offset
-			, double		// float value
-			, const char*	// string value
-			>;
-
 		using value = boost::variant<
 			  bool		// boolean_type
 			, char		// character_type

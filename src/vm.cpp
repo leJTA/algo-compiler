@@ -1,5 +1,6 @@
 #include "vm.hpp"
 #include <boost/variant.hpp>
+#include <boost/lexical_cast.hpp>
 #include <exception>
 
 namespace algc
@@ -98,15 +99,42 @@ namespace algc
 				assign(frame_ptr[boost::get<int>(*pc++)], stack_ptr[0]);
 				break;
 
+			case op_new_bool_array:
+				--stack_ptr;
+				new_bool_array(frame_ptr[boost::get<int>(*pc++)], boost::get<int>(stack_ptr[0]));
+				break;
+
+			case op_new_char_array:
+				--stack_ptr;
+				new_char_array(frame_ptr[boost::get<int>(*pc++)], boost::get<int>(stack_ptr[0]));
+				break;
+
+			case op_new_int_array:
+				--stack_ptr;
+				new_int_array(frame_ptr[boost::get<int>(*pc++)], boost::get<int>(stack_ptr[0]));
+				break;
+
+			case op_new_float_array:
+				--stack_ptr;
+				new_float_array(frame_ptr[boost::get<int>(*pc++)], boost::get<int>(stack_ptr[0]));
+				break;
+
+			case op_new_string_array:
+				--stack_ptr;
+				new_string_array(frame_ptr[boost::get<int>(*pc++)], boost::get<int>(stack_ptr[0]));
+				break;
+
 			case op_array_length:
-				//*stack_ptr++ = frame_ptr[*pc++];
-				*stack_ptr++ = array_length(frame_ptr[boost::get<int>(*pc++)]);
+				array_length(*stack_ptr++, frame_ptr[boost::get<int>(*pc++)]);
 				break;
 
 			case op_aload:
+				aload(stack_ptr[-1], frame_ptr[boost::get<int>(*pc++)]);
 				break;
 
 			case op_astore:
+				stack_ptr -= 2;
+				astore(frame_ptr[boost::get<int>(*pc++)], stack_ptr[1], stack_ptr[0]);
 				break;
 
 			case op_push_char:
@@ -190,6 +218,7 @@ namespace algc
 		, "size_t"
 		, "real"
 		, "string"
+		, "array"
 	};
 
 	void vmachine::neg(data& x)
@@ -424,10 +453,129 @@ namespace algc
 		}
 	}
 
-	int vmachine::array_length(data &x)
+	void vmachine::new_bool_array(data& x, int sz)
 	{
-		if (x.which() == 6) {
-			return strlen(boost::get<const char*>(x));
+		if (sz == 0) {
+			throw std::runtime_error(string("size of array must be greater than zero"));
+		}
+		x = std::make_shared<array>(std::vector<bool>(sz));
+	}
+
+	void vmachine::new_char_array(data& x, int sz)
+	{
+		if (sz == 0) {
+			throw std::runtime_error(string("size of array must be greater than zero"));
+		}
+		x = std::make_shared<array>(std::vector<char>(sz));
+	}
+
+	void vmachine::new_int_array(data& x, int sz)
+	{
+		if (sz == 0) {
+			throw std::runtime_error(string("size of array must be greater than zero"));
+		}
+		x = std::make_shared<array>(std::vector<int>(sz));
+	}
+
+	void vmachine::new_float_array(data& x, int sz)
+	{
+		if (sz == 0) {
+			throw std::runtime_error(string("size of array must be greater than zero"));
+		}
+		x = std::make_shared<array>(std::vector<double>(sz));
+	}
+
+	void vmachine::new_string_array(data& x, int sz)
+	{
+		if (sz == 0) {
+			throw std::runtime_error(string("size of array must be greater than zero"));
+		}
+		x = std::make_shared<array>(std::vector<const char*>(sz));
+	}
+
+	void vmachine::aload(data& x, data& y)
+	{
+		if (y.which() == 7) {	// if it is an array
+			if (x.which() == 3) {	// if the index in an integer
+				array& p(*boost::get<std::shared_ptr<array> >(y));
+				int index = boost::get<int>(x);
+				boost::apply_visitor([&x, index](auto& t){
+					if (index <= 0 || index > t.size()) {
+						throw std::runtime_error(string("index overflow : index = ")
+														 + boost::lexical_cast<string>(index)
+														 + " and size = " + boost::lexical_cast<string>(t.size()));
+					}
+					x = t[index - 1];
+				}, p);
+			}
+			else {
+				throw std::runtime_error(string("index of array must be of the integer type not : ")
+												 + type_str[x.which()]);
+			}
+		}
+		else {
+			throw std::runtime_error(string("array access operation cannot be applied on type : ")
+											 + type_str[y.which()]);
+		}
+	}
+
+	void vmachine::astore(data& x, data& i, data& y)
+	{
+		if (x.which() == 7) {	// if it is an array
+			if (i.which() == 3) {	// if the index in an integer
+				array& p(*boost::get<std::shared_ptr<array> >(x));	// get the content of the pointer
+				int index = boost::get<int>(i);	// get the index at the top of the stack
+				int sz = boost::apply_visitor([](auto& t){return int(t.size());}, p);
+
+				if (index > 0 && index <= sz) {
+					if (p.which() == 0 && y.which() == 1) { // boolean <- boolean
+						boost::get<std::vector<bool> >(p)[index - 1] = boost::get<bool>(y);
+					}
+					else if (p.which() == 1 && y.which() == 2) {	// char <- char
+						boost::get<std::vector<char> >(p)[index - 1] = boost::get<char>(y);
+					}
+					else if (p.which() == 2 && y.which() == 3) {	// integer <- integer
+						boost::get<std::vector<int> >(p)[index - 1] = boost::get<int>(y);
+					}
+					else if (p.which() == 3 && y.which() == 3) {	// float <- integer
+						boost::get<std::vector<double> >(p)[index - 1] = boost::get<int>(y);
+					}
+					else if (p.which() == 3 && y.which() == 5) {	// float <- float
+						boost::get<std::vector<double> >(p)[index - 1] = boost::get<double>(y);
+					}
+					else if (p.which() == 4 && y.which() == 6) {	// string <- string
+						boost::get<std::vector<const char*> >(p)[index - 1]
+								= strdup(boost::get<const char*>(y));
+					}
+					else {
+						throw std::runtime_error(string("cannot assign ")
+												+ type_str[y.which()] + " value to " + type_str[p.which()] + " value");
+					}
+				}
+				else {
+					throw std::runtime_error(string("index overflow : index = ")
+													 + boost::lexical_cast<string>(index)
+													 + " and size = " + boost::lexical_cast<string>(sz));
+				}
+			}
+			else {
+				throw std::runtime_error(string("index of array must be of the integer type not : ")
+												 + type_str[x.which()]);
+			}
+		}
+		else {
+			throw std::runtime_error(string("array access operation cannot be applied on type : ")
+											 + type_str[y.which()]);
+		}
+	}
+
+	void vmachine::array_length(data &x, data& y)
+	{
+		if (y.which() == 6) {
+			x = strlen(boost::get<const char*>(x));
+		}
+		else if (y.which() == 7) {
+			x = boost::apply_visitor([](auto& t){return int(t.size());}, *boost::get<std::shared_ptr<array> >(y));
 		}
 		else {
 			throw std::runtime_error(string("cannot get size of varialble of type ") + type_str[x.which()]);

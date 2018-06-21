@@ -55,11 +55,13 @@ int main(int argc, char* argv[])
 
 	if (success && iter == end ) {
 		if (compiler(ast)) {
+			/*
 			std::cout << "Compile Success\n\n";
 			std::cout << ast.program_name.name << "------------------\n";
 			std::cout << "-----------------------------------\n";
 			std::cout << "Assembler--------------------------\n\n";
 			compiler.print_assembler();
+			*/
 
 			std::cout << "\n\n-----------------------------------\n";
 			std::cout << "Execution : " << ast.program_name.name << std::endl;

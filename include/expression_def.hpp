@@ -11,7 +11,7 @@ namespace algc {
       template <typename Iterator>
       expression<Iterator>::expression(error_handler<Iterator>& error_handler) : expression::base_type(expr)
       {
-         qi::_1_type _1;
+			qi::_1_type _1;
          qi::_2_type _2;
          qi::_3_type _3;
          qi::_4_type _4;
@@ -22,10 +22,10 @@ namespace algc {
          qi::int_type int_;
          qi::real_parser<double, qi::strict_real_policies<double> > strict_double;
          qi::raw_type raw;
-         qi::lexeme_type lexeme;
-         qi::alpha_type alpha;
-         qi::alnum_type alnum;
-         qi::bool_type bool_;
+			qi::lexeme_type lexeme;
+			qi::alpha_type alpha;
+			qi::alnum_type alnum;
+			qi::bool_type bool_;
 
          using qi::on_error;
          using qi::on_success;
@@ -117,7 +117,7 @@ namespace algc {
             ("write")
             ("return")
             ("returns")
-            ;
+				;
 
          ///////////////////////////////////////////////////////////////////////
          // Main expression grammar
@@ -170,13 +170,13 @@ namespace algc {
             | bool_
 				| (qi::lit('\'') > char_ > qi::lit('\''))
 				| no_skip['"' > *(char_ - '"') > '"']
-            | '(' > expr > ')'
+				| '(' > expr > ')'
             ;
 
          array_access =
-              (identifier >> '[')
-            > expr
-            > ']'
+				  (identifier >> '[')
+				> expr
+				> ']'
             ;
 
 			array_size_access =

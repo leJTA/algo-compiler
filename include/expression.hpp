@@ -39,7 +39,7 @@ namespace algc {
             additive_op, multiplicative_op, unary_op
             ;
 
-         qi::symbols<char> keywords;
+			qi::symbols<char> keywords;
       };
    }
 }
