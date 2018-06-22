@@ -26,67 +26,67 @@ namespace algc
 				 break;
 
 			case op_add:
-				 --stack_ptr;
+				 *stack_ptr-- = byte_code(0);
 				 add(stack_ptr[-1], stack_ptr[0]);
 				 break;
 
 			case op_sub:
-				 --stack_ptr;
+				 *stack_ptr-- = byte_code(0);
 				 sub(stack_ptr[-1], stack_ptr[0]);
 				 break;
 
 			case op_mul:
-				 --stack_ptr;
+				 *stack_ptr-- = byte_code(0);
 				 mul(stack_ptr[-1], stack_ptr[0]);
 				 break;
 
 			case op_div:
-				 --stack_ptr;
+				 *stack_ptr-- = byte_code(0);
 				 div(stack_ptr[-1], stack_ptr[0]);
 				 break;
 
 			case op_mod:
-				 --stack_ptr;
+				 *stack_ptr-- = byte_code(0);
 				 mod(stack_ptr[-1], stack_ptr[0]);
 				 break;
 
 			case op_eq:
-				--stack_ptr;
+				*stack_ptr-- = byte_code(0);
 				eq(stack_ptr[-1], stack_ptr[0]);
 				break;
 
 			case op_neq:
-				--stack_ptr;
+				*stack_ptr-- = byte_code(0);
 				neq(stack_ptr[-1], stack_ptr[0]);
 				break;
 
 			case op_lt:
-				--stack_ptr;
+				*stack_ptr-- = byte_code(0);
 				lt(stack_ptr[-1], stack_ptr[0]);
 				break;
 
 			case op_lte:
-				--stack_ptr;
+				*stack_ptr-- = byte_code(0);
 				lte(stack_ptr[-1], stack_ptr[0]);
 				break;
 
 			case op_gt:
-				--stack_ptr;
+				*stack_ptr-- = byte_code(0);
 				gt(stack_ptr[-1], stack_ptr[0]);
 				break;
 
 			case op_gte:
-				--stack_ptr;
+				*stack_ptr-- = byte_code(0);
 				gte(stack_ptr[-1], stack_ptr[0]);
 				break;
 
 			case op_and:
-				--stack_ptr;
+				*stack_ptr-- = byte_code(0);
 				and_(stack_ptr[-1], stack_ptr[0]);
 				break;
 
 			case op_or:
-				--stack_ptr;
+				*stack_ptr-- = byte_code(0);
 				or_(stack_ptr[-1], stack_ptr[0]);
 				break;
 
@@ -95,32 +95,32 @@ namespace algc
 				break;
 
 			case op_store:
-				--stack_ptr;
+				*stack_ptr-- = byte_code(0);
 				assign(frame_ptr[boost::get<int>(*pc++)], stack_ptr[0]);
 				break;
 
 			case op_new_bool_array:
-				--stack_ptr;
+				*stack_ptr-- = byte_code(0);
 				new_bool_array(frame_ptr[boost::get<int>(*pc++)], boost::get<int>(stack_ptr[0]));
 				break;
 
 			case op_new_char_array:
-				--stack_ptr;
+				*stack_ptr-- = byte_code(0);
 				new_char_array(frame_ptr[boost::get<int>(*pc++)], boost::get<int>(stack_ptr[0]));
 				break;
 
 			case op_new_int_array:
-				--stack_ptr;
+				*stack_ptr-- = byte_code(0);
 				new_int_array(frame_ptr[boost::get<int>(*pc++)], boost::get<int>(stack_ptr[0]));
 				break;
 
 			case op_new_float_array:
-				--stack_ptr;
+				*stack_ptr-- = byte_code(0);
 				new_float_array(frame_ptr[boost::get<int>(*pc++)], boost::get<int>(stack_ptr[0]));
 				break;
 
 			case op_new_string_array:
-				--stack_ptr;
+				*stack_ptr-- = byte_code(0);
 				new_string_array(frame_ptr[boost::get<int>(*pc++)], boost::get<int>(stack_ptr[0]));
 				break;
 
@@ -135,6 +135,7 @@ namespace algc
 			case op_astore:
 				stack_ptr -= 2;
 				astore(frame_ptr[boost::get<int>(*pc++)], stack_ptr[1], stack_ptr[0]);
+				stack_ptr[0] = stack_ptr[1] = byte_code(0);
 				break;
 
 			case op_push_char:
@@ -170,11 +171,11 @@ namespace algc
 					  pc += boost::get<size_t>(*pc);
 				 else
 					  ++pc;
-				 --stack_ptr;
+				 *stack_ptr-- = byte_code(0);
 				 break;
 
 			case op_print:
-				--stack_ptr;
+				*stack_ptr-- = byte_code(0);
 				print(stack_ptr[0]);
 				break;
 
@@ -203,7 +204,6 @@ namespace algc
 					  stack_ptr -= (nargs - 1);   //  the stack will now contain the return value
 				 }
 				 break;
-
 			case op_return:
 				return stack_ptr[-1];
 			}

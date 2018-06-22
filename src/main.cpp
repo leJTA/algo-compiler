@@ -15,9 +15,8 @@ int main(int argc, char* argv[])
         filename = argv[1];
     }
     else {
-    	filename = "test.txt";
 		std::cerr << "Error: No input file provided." << std::endl;
-        //return 1;
+		return 1;
     }
 
     std::ifstream in(filename, std::ios_base::in);

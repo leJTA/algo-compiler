@@ -61,7 +61,7 @@ namespace algc {
       op_stk_adj,     //  adjust the stack (for args and locals)
       op_call,        //  function call
       op_return       //  return from function
-   };
+	};
 
 	using array = boost::variant<
 		  std::vector<bool>
