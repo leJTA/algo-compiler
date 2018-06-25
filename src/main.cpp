@@ -5,7 +5,12 @@
 #include "skipper.hpp"
 #include "compiler.hpp"
 
-using namespace std;
+void wait_for_input()
+{
+	std::cout << "Press return to continue" << std::endl;
+	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	std::cin.get();
+}
 
 int main(int argc, char* argv[])
 {
@@ -75,12 +80,15 @@ int main(int argc, char* argv[])
 			std::cout << "\n\n-----------------------------------\n";
 			std::cout << "Terminated\n";
 			std::cout << "-----------------------------------\n\n";
+			wait_for_input();
 		}
 		else {
 			std::cout << "Compile failure\n";
+			wait_for_input();
 		}
 	} else {
 		std::cout << "Parse Failure." << std::endl;
+		wait_for_input();
 	}
 
 }
