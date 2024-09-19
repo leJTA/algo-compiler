@@ -8,6 +8,7 @@
 #include <boost/fusion/include/io.hpp>
 #include <boost/optional.hpp>
 #include <list>
+#include <iostream>
 
 namespace algc {
    namespace ast {
