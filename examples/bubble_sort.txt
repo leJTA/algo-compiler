@@ -1,0 +1,44 @@
+/* file bubble_sort.txt */
+/* Sort an array using bubble sort algorithm */
+algorithm bubble_sorting
+variables
+	array_of_integer values[100]
+	integer nvalues
+   integer count
+   integer r
+   
+functions_and_procedures
+	procedure bubble_sort(array_of_integer arr, integer n)
+	variables
+      integer i
+      integer j
+      integer swap
+	begin
+      for i := 1 to n do
+         for j := 1 to n - i do
+            if arr[j] > arr[j + 1] then
+               swap := arr[j]
+               arr[j] := arr[j + 1]
+               arr[j + 1] := swap
+            endif
+         endfor
+      endfor
+	end	/* end procedure */
+
+begin
+   write("How many values ? ")
+   read(nvalues)
+
+	write("Enter the ", nvalues, " values : ")
+   for count := 1 to nvalues do
+      read(r)
+      values[count] := r
+   endfor
+
+   call bubble_sort(values, nvalues)
+	
+   write("The sorted values are : ")
+   for count := 1 to nvalues do
+      write(values[count], " ")
+   endfor
+end	/* end algorithm */

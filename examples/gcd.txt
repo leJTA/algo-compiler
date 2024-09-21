@@ -1,0 +1,27 @@
+/* file gcd.txt */
+/* Calculate the greatest common divisor (GCD) of integers a and b */
+algorithm gcd_calculation
+variables
+	integer a
+	integer b
+functions_and_procedures
+	function gcd(integer x, integer y) returns integer
+	variables
+		integer r
+	begin
+		while y != 0 do
+         r := x % y
+         x := y
+         y := r
+      endwhile
+      return x
+	end	/* end function */
+
+begin
+	write("Enter a : ")
+	read(a)
+	write("Enter b : ")
+	read(b)
+	write("The greatest common divisor of ", a, " and ", b, " is ", gcd(a,b))
+
+end	/* end algorithm */

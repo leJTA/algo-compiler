@@ -1,6 +1,6 @@
-# algo_compiler
+# algo-compiler
 
-algo_compiler is a program that compiles and executes source code written in an algorithmic language.
+algo-compiler is a program that compiles and executes source code written in an algorithmic language.
 
 ## Installation
 
@@ -9,8 +9,8 @@ The algo compiler requires the `boost.spirit` library to be compiled.
 Clone Bitbucket repository and use CMake and Make to build the project.
 
 ```
-$ git clone https://bitbucket.org/le_JTA/algo_compiler/
-$ cd algo_compiler
+$ git clone https://bitbucket.org/le_JTA/algo-compiler/
+$ cd algo-compiler
 $ mkdir build
 $ cd build
 $ cmake -DCMAKE_BUILD_TYPE=Release ..
@@ -23,7 +23,7 @@ Go to the location of the binary and run it passing the file path of the file th
 
 ```
 $ cd bin/Release
-$ ./algo_compiler <file_path>
+$ ./compiler <file_path>
 ```
 
 ## Example

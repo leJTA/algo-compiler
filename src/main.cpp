@@ -80,15 +80,12 @@ int main(int argc, char* argv[])
 			std::cout << "\n\n-----------------------------------\n";
 			std::cout << "Terminated\n";
 			std::cout << "-----------------------------------\n\n";
-			wait_for_input();
 		}
 		else {
 			std::cout << "Compile failure\n";
-			wait_for_input();
 		}
 	} else {
 		std::cout << "Parse Failure." << std::endl;
-		wait_for_input();
 	}
-
+	wait_for_input();
 }
